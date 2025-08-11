@@ -65,12 +65,15 @@
 
     // ------------------------------------------------------------------------
     // 説明文やお約束のパーツ
+    // グローバル変数
     // ------------------------------------------------------------------------
-    var expname = "sugiyama2025-0809-001-"
-    var filename = expname + yyyymmddhhmise() + ".csv";
+    var expname  = "sugiyama2025-0809-001-"             // 実験名
+    var filename = expname + yyyymmddhhmise() + ".csv"; // 保存時のファイル名
+    var stimulusDuration  = 5000 ;                      // 問題表示時間
+    var responseTimeLimit = 5000 ;                      // 回答制限時間
+    var resttime_msec     = 10000 ;                     // 休憩時間 3分(msec) 3 x 60 x 1000 = 180000
 
     // alert(expsubject) ;
-    // alert(voicefile) ;
 
     // ここから開始
     var jsPsych = initJsPsych({
@@ -137,30 +140,6 @@
       choices: ['開始する'],
     };
 
-    // 凝視点
-    var eyepoint = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: '<p style="font-size: 48px;">+</p>',
-      choices: "NO_KEYS",
-      trial_duration: 1000,
-    };
-
-    // 凝視点Lサイズ
-    var eyepointL = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: '<p style="font-size: 384px;">+</p>',
-      choices: "NO_KEYS",
-      trial_duration: 1000,
-    };
-
-    // 空白画面
-    var blankscreen = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: '',
-      choices: "NO_KEYS",
-      trial_duration: 1000,
-    };
-
     // 実験の終了
     var bye = {
       type: jsPsychHtmlKeyboardResponse,
@@ -180,13 +159,15 @@
       auto_preload: true
     }
 
+    
+
     // 休憩(本番時には3分に)
     var resttime = {
       type: jsPsychHtmlKeyboardResponse,
       stimulus: "3分間休憩します",
       choices: 'q',
-      stimulus_duration: 180000, // 単位はミリ秒なので5秒なら5000
-      trial_duration: 180000,
+      stimulus_duration: resttime_msec, // 前の方でグローバル変数で定義
+      trial_duration: resttime_msec,
     };
 
     // ---------------------------------------------------------------------
@@ -231,8 +212,7 @@
       margin_horizontal: '100px',
       stimulus: PracticeExam1Text,
       choices: 'q',
-      stimulus_duration: 120000, // 単位はミリ秒なので5秒なら5000
-      trial_duration: 120000,
+      trial_duration: stimulusDuration, // 前の方でグローバル変数で定義
     };
 
     // 質問内容を配列で定義
@@ -278,7 +258,6 @@
 
       PracticeAnswer.push({
         type: jsPsychSurveyMultiChoice,
-        trial_duration: 5000,           // 5秒で自動的に次へ進む
         button_label: '次へ',
         // ▼「問題文を表示」ボタン＋モーダル本体を preamble に直埋め込み
         preamble: `
@@ -361,11 +340,11 @@
           overlay?.addEventListener('click', close);
           document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 
-          // --- 自動送信のタイマー（30秒） ---
+          // --- 回答時間切れの処理 ---
           const timer = setTimeout(() => {
             const btn = document.querySelector('#jspsych-survey-multi-choice-next');
             if (btn) btn.click();
-          }, 30000);
+          }, responseTimeLimit);　 // 前の方でグローバル変数で定義
 
           // --- 手動クリック時にタイマー解除 ---
           const nextBtn = document.querySelector('#jspsych-survey-multi-choice-next');
@@ -446,7 +425,7 @@
     // 実験の開始
     // ------------------------------------------------------------------------
 
-    jsPsych.run([Page1, Page2, Page3, PracticeTrials, bye]);
+    jsPsych.run([enter_fullscreen,Page1, Page2, Page3, PracticeTrials, exit_fullscreen,bye]);
     //jsPsych.run([PracticeTrials,bye,exit_fullscreen]);
     // ========================================================
     // プログラム本体の終わり
