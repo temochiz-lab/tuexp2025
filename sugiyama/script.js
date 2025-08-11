@@ -1,0 +1,361 @@
+// 保存用のファイル名を生成
+function yyyymmddhhmise() {
+  // 日付時間秒を文字列で返す	
+    const dt = new Date();
+    var yyyy = dt.getFullYear();
+    var mm = ('00' + (dt.getMonth()+1)).slice(-2);
+    var dd = ('00' + dt.getDate()).slice(-2);
+    var hh = ('00' + dt.getHours()).slice(-2);
+    var mi = ('00' + dt.getMinutes()).slice(-2);
+    var se = ('00' + dt.getSeconds()).slice(-2);
+  
+    var answer = yyyy + mm + dd + "-" + hh + mm + se ;
+    return (answer);
+  }
+
+// ------------------------------------------------------------------------
+// 説明文やお約束のパーツ
+// ------------------------------------------------------------------------
+var expname  = "sugiyama2025-0809-001-"
+var filename = expname + yyyymmddhhmise() + ".csv" ;
+
+// alert(expsubject) ;
+// alert(voicefile) ;
+
+// ここから開始
+  var jsPsych = initJsPsych({
+    on_finish: function() {
+      jsPsych.data.get().localSave('csv', filename);
+  //    jsPsych.data.displayData();
+    }
+  });
+  
+// フルスクリーン開始
+var enter_fullscreen = {
+  type: jsPsychFullscreen,
+  message: '<p>実験名: ' + expname + expsubject + '</p><p>開始ボタンを押すと全画面表示で実験が始まります。</p>',
+  button_label: "開始",
+  fullscreen_mode: true
+}
+
+// 実験の説明
+var Page1 = {
+  type: jsPsychHtmlButtonResponse,
+  margin_vertical: '100px',
+  margin_horizontal: '100px',
+  stimulus: '<div align="left" style="width:80%;margin:auto;"><font> \
+  <br><br><br>\
+私は、常磐大学人間科学部心理学科4年の杉山真尋です。 <br>\
+本研究の目的は、文章を読む際の体験や印象がどのように形成されるのかを検討することにあります。日常的な読解場面における反応や感じ方の傾向を把握するために、パソコン画面上で文章を読んでいただく課題を通して実験を行います。 <br>\
+ <br><br>\
+本実験への参加は完全に任意であり、参加を強制するものではありません。実施中に気分が優れない、または答えたくないと感じた場合は、いつでも中断していただいて構いません。また、参加の有無や途中中止によって、参加者が不利益を被ることは一切ありませんのでご安心ください。さらに、実験後に協力を取り消すことも可能です。 <br>\
+ <br><br>\
+ご協力いただいたデータは、研究室内で厳重に管理され、直ちに記号化された上で統計的に処理されます。個人情報が特定されることはなく、プライバシー保護には十分に配慮しております。得られたデータは卒業論文の作成および常磐大学への提出、必要に応じた学術学会等での発表といった、学術研究の目的に限って使用されます。分析後のデータは10年間保管し、その後は個人情報保護に配慮した方法で適切に廃棄いたします。 <br>\
+ <br><br>\
+上記の趣旨をご理解いただいたうえで、どうぞ自然な形で課題にご参加ください。皆さまのご協力に深く感謝申し上げます。 <br>\
+ <br></font></div>',
+ choices: ['次へ'],
+};
+
+// Facesheet / 被検者情報の入力 完成時には入力必須にしておく
+var Page2 = {
+  type: jsPsychSurveyText,
+  questions: [
+    {prompt: '学籍番号と年齢を入力してください。<br><br><br>あなたの学籍番号を入力してください。', columns: 5, required: false, name: 'age'},
+    {prompt: 'あなたの年齢を入力してください。',　 columns: 5, required: false, name: 'sex'},
+  ],
+  button_label: '次へ',
+};
+
+var Page3 = {
+  type: jsPsychHtmlButtonResponse,
+  margin_vertical: '100px',
+  margin_horizontal: '100px',
+  stimulus: '<div align="left"><font> \
+  <br><br><br>\
+この実験では、文章を読んで、その内容に関する質問に答えていただきます。 <br>\
+文章の表示時間や回答内容は、研究目的のために記録されます。 <br>\
+途中で休憩時間や記憶に関するテストも含まれます。 <br>\
+  <br><br><br>\
+以下のことに注意してください： <br>\
+・実験中は静かな環境で行ってください。 <br>\
+・わからない言葉や内容があっても、まずはご自身の理解で読み進めてください。 <br>\
+  <br><br><br>\
+まず初めに操作方法の確認のための練習問題を行います。 <br>\
+準備が出来たら、「開始する」を押してください。 <br>\
+ <br><br></font></div>',
+ choices: ['開始する'],
+};
+
+// 凝視点
+var eyepoint = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: '<p style="font-size: 48px;">+</p>',
+  choices: "NO_KEYS",
+  trial_duration: 1000,
+};
+
+// 凝視点Lサイズ
+var eyepointL = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: '<p style="font-size: 384px;">+</p>',
+  choices: "NO_KEYS",
+  trial_duration: 1000,
+};
+
+
+// 空白画面
+var blankscreen = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: '',
+  choices: "NO_KEYS",
+  trial_duration: 1000,
+};
+
+// 実験の終了
+var bye = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: 'これで実験は終了です。 PCには触れずに実験者の指示に従ってください。',
+};
+
+// フルスクリーン終了
+var exit_fullscreen = {
+  type: jsPsychFullscreen,
+  fullscreen_mode: false,
+  delay_after: 0
+}
+
+// プリロード
+var preload = {
+  type: jsPsychPreload,
+  auto_preload: true
+}
+
+
+// 休憩(本番時には3分に)
+var resttime = {
+  type: jsPsychHtmlKeyboardResponse,
+  stimulus: "3分間休憩します",
+  choices: 'q',
+  stimulus_duration: 180000, // 単位はミリ秒なので5秒なら5000
+  trial_duration: 180000,
+};
+
+
+
+// ---------------------------------------------------------------------
+// 練習試行
+// ---------------------------------------------------------------------
+
+var PracticeTrials = {
+  timeline: [],
+};
+
+var PracticePage1 = {
+  type: jsPsychHtmlButtonResponse,
+  margin_vertical: '100px',
+  margin_horizontal: '100px',
+  stimulus: '<div align="left" style="width:80%;margin:auto;"><font> \
+  <br><br><br>\
+これから実験を開始いたします。 <br>\
+  <br><br><br>\
+初めに２分間、文章を読んでいただきます。２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
+  <br><br><br>\
+まずは全体の流れをつかむつもりで、スムーズに読み進めてください。 <br>\
+細かいところは後から読み返していただければ大丈夫です。 <br>\
+  <br><br><br>\
+準備が出来たら「開始」ボタンを押してください。 <br>\
+開始と同時にタイマーがスタートされます。 <br>\
+ <br><br></font></div>',
+ choices: ['開始する'],
+};
+
+
+var PracticeExam1Text = '<div align="left" style="width:90%;margin:auto;">\
+<div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto;">\
+時間とは、我々にとってどれほど確かなものだろうか。時計の針は均等に進むが、経験される時間は常にゆがみ、濃淡をもって流れる。それゆえ時間は、物理的事実であると同時に、意味づけられた現象でもある。つまり、時間は人によって「解釈される」ものであって、単に流れるものではない。\
+ある出来事が意味をもつのは、しばしばそれが過去となってからである。経験の真っ只中では、その価値や位置づけは不明瞭だが、後になって文脈の中に配置されることで「意味ある出来事」となる。ここには、意味が時間を遡って形成されるという逆流的構造がある。　\
+だがこの逆流は、時間の一方向性と矛盾する。過去は変わらないはずだが、意味は後から与えられる以上、我々の現在は絶えず過去を書き換えているとも言える。記憶は事実を保存するのではなく、現在の自己にとっての妥当性に基づいて再構成される。すなわち、時間の流れは直線的であっても、意味の流れは循環的である。　　　　　\
+また未来は、希望や予測として現在に影を落とす。予想される未来は、現在の選択を方向づける。だがこの未来は、まだ訪れていない以上、想像の産物であり、その不確かさゆえに、現在を強く規定する。「今を生きる」という感覚すら、未来の予感を含んだ構造の中で生まれている。　\
+こうして、過去・現在・未来はいずれも固定されたものではなく、互いに交錯しながら意味を生成する。時間とは流れるものではなく、意味が構成される舞台であり、出来事が生じる順序ではなく、出来事が持ちうる価値をめぐる関係性なのである。すなわち、我々が時間を経験するとは、自己という存在の構成そのものを意味する。\
+</div></font></div>' ;
+
+var PracticeExam1 = {
+  type: jsPsychHtmlKeyboardResponse,
+  margin_vertical: '100px',
+  margin_horizontal: '100px',
+  stimulus: PracticeExam1Text,
+  choices: 'q',
+  stimulus_duration: 120000, // 単位はミリ秒なので5秒なら5000
+  trial_duration:120000,
+};
+
+// 質問内容を配列で定義
+const practiceQuestions = [
+  {
+    prompt: '問１ 筆者の主張として最も適切なのはどれか。',
+    options: [
+      '　時間は人間の記憶によって直線的に捉えられる。',      '　出来事の意味は、経験の瞬間に確定する。',      '　時間とは、物理的現象というより意味の構造である。',      '　過去は変えられない以上、意味も固定的である。',      '　未来を考えることは現在の妨げとなる。'
+    ]
+  },
+  {
+    prompt: '問２「意味が時間を遡って形成される」とはどういうことか。',
+    options: [
+      '　意味ある出来事は予め予定されているという思想である。',      '　出来事が起こった瞬間には意味がなく、後から文脈が与えられる。',      '　時間は常に因果に従って進行するという認識である。',      '　過去は未来の視点からのみ語られるという決定論である。',      '　出来事の価値は、その時点での感情によって固定される。 '
+    ]
+  },
+  {
+    prompt: '問３ 本文の内容に最も合致する考え方はどれか。',
+    options: [
+      '　記憶は過去を忠実に保持する重要な情報資源である。',      '　意味の再構成により、過去の出来事も変化しうる。',      '　未来に希望をもたぬ者は、時間を経験することができない。',      '　現在を理解するには、まず未来を捨てる必要がある。',      '　出来事の意味は、発生の順序に従って変化する。'
+    ]
+  },
+  {
+    prompt: '問４ 本文における「未来」の特徴として最も適切なのはどれか。',
+    options: [
+      '　客観的予測によって構成される安定した領域である。',      '　現在に対して価値中立的に作用する想念である。',      '　想像にすぎないが、現在の行動に実質的影響を与える。',      '　過去の反復としてのみ捉えられる時間の残響である。',      '　意識されることなく到来する、偶然性の領域である。'
+    ]
+  },
+  {
+    prompt: '問５ 本文に通底する世界観に最も近いものはどれか。',
+    options: [
+      '　人間は過去と未来に翻弄され、現在を生きることができない。',      '　時間とは単なる流れではなく、人間によって構築される関係的な次元である。',      '　意味とは物事に本来的に備わったものであり、時間とは無関係である。',      '　現在の選択こそが絶対的であり、時間の他の要素は従属的である。',      '　時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
+    ]
+  }
+];
+
+// PracticeAnswer配列を作成
+const PracticeAnswer = [];
+
+for (let i = 0; i < practiceQuestions.length; i++) {
+  PracticeAnswer.push({
+    type: jsPsychSurveyMultiChoice,
+    trial_duration: 5000, // 5秒で自動的に次へ進む
+    button_label: '次へ',
+    preamble: '<button type="button" onclick="window.open(\'PracticeExam1Text.html\', \'_blank\', \'width=800,height=700\')">問題文を表示</button>',
+    questions: [
+      {
+        prompt: practiceQuestions[i].prompt,
+        options: practiceQuestions[i].options,
+        required: false,
+        horizontal: false // 横並びにしない（縦書き表示の基礎）
+      }
+    ],
+    on_load: () => {
+      // --- 縦書きレイアウトの適用 ---
+      const style = document.createElement('style');
+      style.textContent = `
+        /* 全体を横並びにする */
+        .jspsych-survey-multi-choice {
+          display: flex;
+          flex-direction: row;
+          gap: 2em; /* 問ごとの間隔 */
+        }
+    
+        /* 質問文を縦書きに */
+        .jspsych-survey-multi-choice-question {
+          writing-mode: vertical-rl;
+          text-orientation: upright;
+        }
+    
+        /* 選択肢部分も縦書きに */
+        .jspsych-survey-multi-choice-option label {
+          writing-mode: vertical-rl;
+          text-orientation: upright;
+        }
+    
+        /* ボタンをセンタリング */
+        #jspsych-survey-multi-choice-next {
+          display: block;
+          margin: 2em auto;
+        }
+      `;
+      document.head.appendChild(style);
+    
+      // --- 自動送信のタイマー ---
+      const timer = setTimeout(() => {
+        const btn = document.querySelector('#jspsych-survey-multi-choice-next');
+        if (btn) btn.click();
+      }, 5000);
+    
+      // --- 手動クリック時にタイマー解除 ---
+      const btn = document.querySelector('#jspsych-survey-multi-choice-next');
+      if (btn) btn.addEventListener('click', () => clearTimeout(timer), { once: true });
+    }
+  });
+}
+    
+var QofFont_scale = [
+  "全くそう思わない", 
+  "そう思わない", 
+  "どちらでもない", 
+  "そう思う", 
+  "非常にそう思う"
+];
+
+var QofFont = {
+  type: jsPsychSurveyLikert,
+  button_label: "次へ",
+  scale_width: 700,
+  questions: [
+    {prompt: "文字がはっきり読める", name: 'Q01', labels: QofFont_scale},
+    {prompt: "文字がくっきり見える", name: 'Q02', labels: QofFont_scale},
+    {prompt: "文字の太さが適切だと感じた", name: 'Q03', labels: QofFont_scale},
+    {prompt: "語彙や表現の意味をすぐに理解できた", name: 'Q04', labels: QofFont_scale},
+    {prompt: "読んだ内容が頭に入りやすかった", name: 'Q05', labels: QofFont_scale},
+    {prompt: "読み終えた後内容を思い出せる", name: 'Q06', labels: QofFont_scale},
+    {prompt: "文章の要点を把握しやすかった", name: 'Q07', labels: QofFont_scale},
+    {prompt: "読むリズムが途切れにくかった", name: 'Q8', labels: QofFont_scale},
+    {prompt: "途中で立ち止まらずスムーズに読めた", name: 'Q9', labels: QofFont_scale},
+    {prompt: "読むスピードが速く感じた", name: 'Q10', labels: QofFont_scale},
+    {prompt: "全体を読むのに必要な時間が短く感じた", name: 'Q11', labels: QofFont_scale},
+  ],
+}
+
+PracticeTrials.timeline.push(PracticePage1,PracticeExam1) ;
+// タイムラインに追加
+for (let i = 0; i < PracticeAnswer.length; i++) {  PracticeTrials.timeline.push(PracticeAnswer[i]); }
+PracticeTrials.timeline.push(QofFont,resttime) ;
+
+// ---------------------------------------------------------------------
+// 本番試行
+// ------------------------------------------------------------------------------
+// 順番をランダマイズしたいので指定しておく
+var trials = {
+  timeline: [],
+//  timeline_variables: examPictures,
+//  randomize_order: true,
+};
+
+var ExamPage1 = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '(本番)これから物語が流れます。右耳から流れる音声に集中して，物語を追唱してください。追唱は完璧でなくても問題ありません。<br><br>',
+  choices: ['次へ'],
+};
+
+var Exam = {
+  type: jsPsychAudioButtonResponse,
+  response_allowed_while_playing: false ,
+  stimulus: voicefile,
+  choices: ['次へ'],
+  prompt: "<br><br>\
+  <br><br>再生が終わったら「次へ」を押してください。",
+}
+
+var ExamPage2 = {
+  type: jsPsychHtmlButtonResponse,
+  stimulus: '(本番)これで実験を終了です。　次に紙面で物語の確認テストを行います。　実験者からの支持をお待ちください。<br><br>',
+  choices: ['次へ'],
+};
+
+
+// 作成した問題1セットをキューイング
+  trials.timeline.push(ExamPage1,Exam, ExamPage2) ;
+// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+// ------------------------------------------------------------------------
+// 実験の開始
+// ------------------------------------------------------------------------
+
+jsPsych.run([Page1,Page2,Page3,PracticeTrials,bye]);
+//jsPsych.run([PracticeTrials,bye,exit_fullscreen]);
