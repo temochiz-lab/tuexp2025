@@ -102,7 +102,7 @@
   // ======================================================
   // 縦表示の質問群を作成する
   // ======================================================
-  function MakeVerticalQuestions(Answer, Questions) {
+  function MakeVerticalQuestions(Answer, Questions, PopupText) {
     for (let i = 0; i < Questions.length; i++) {
       Answer.push({
         type: jsPsychSurveyMultiChoice,
@@ -126,7 +126,7 @@
               <button id="close-problem" type="button">閉じる</button>
             </div>
             <div id="problem-content">
-              ${typeof PracticeExam1Text !== "undefined" ? PracticeExam1Text : ""}
+              ${typeof PopupText !== "undefined" ? PopupText : ""}
             </div>
           </div>
         `,
@@ -362,7 +362,7 @@
   // ---------------------------------------------------------------------
     // 縦表示の質問群を作成
     const PracticeAnswer = []; // ここに出来上がる
-    MakeVerticalQuestions(PracticeAnswer, practiceQuestions) ;
+    MakeVerticalQuestions(PracticeAnswer, practiceQuestions, PracticeExam1Text) ;
   // ---------------------------------------------------------------------
     var QofFont_scale = [
       "全くそう思わない",
@@ -398,52 +398,86 @@
 
     // ---------------------------------------------------------------------
     // 本番試行
-    /*
+    // ------------------------------------------------------------------------------
+    
+    // 本番試行の問題格納用
+    var Trials = {
+      timeline: [],
+    };
+
+  // ---------------------------------------------------------------------
+    var Exam1Text = '<div align="left" style="width:90%;margin:auto;">\
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+    文章① \
+    </div></div>';
+  // ---------------------------------------------------------------------
+    var Exam1 = {
+      type: jsPsychHtmlKeyboardResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: Exam1Text,
+      choices: 'q',
+      trial_duration: stimulusDuration, // 前の方でグローバル変数で定義
+    };
+  // ---------------------------------------------------------------------
+    // 質問内容を配列で定義
+    const Exam1Questions = [
+      {
+        prompt: '問１ 筆者の主張として最も適切なのはどれか。',
+        options: [
+          '　①時間は人間の記憶によって直線的に捉えられる。', '　②出来事の意味は、経験の瞬間に確定する。', '　③時間とは、物理的現象というより意味の構造である。', '　④過去は変えられない以上、意味も固定的である。', '　⑤未来を考えることは現在の妨げとなる。'
+        ]
+      },
+      {
+        prompt: '問２「意味が時間を遡って形成される」とはどういうことか。',
+        options: [
+          '　①意味ある出来事は予め予定されているという思想である。', '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。', '　③時間は常に因果に従って進行するという認識である。', '　④過去は未来の視点からのみ語られるという決定論である。', '　⑤出来事の価値は、その時点での感情によって固定される。 '
+        ]
+      },
+      {
+        prompt: '問３ 本文の内容に最も合致する考え方はどれか。',
+        options: [
+          '　①記憶は過去を忠実に保持する重要な情報資源である。', '　②意味の再構成により、過去の出来事も変化しうる。', '　③未来に希望をもたぬ者は、時間を経験することができない。', '　④現在を理解するには、まず未来を捨てる必要がある。', '　⑤出来事の意味は、発生の順序に従って変化する。'
+        ]
+      },
+      {
+        prompt: '問４ 本文における「未来」の特徴として最も適切なのはどれか。',
+        options: [
+          '　①客観的予測によって構成される安定した領域である。', '　②現在に対して価値中立的に作用する想念である。', '　③想像にすぎないが、現在の行動に実質的影響を与える。', '　④過去の反復としてのみ捉えられる時間の残響である。', '　⑤意識されることなく到来する、偶然性の領域である。'
+        ]
+      },
+      {
+        prompt: '問５ 本文に通底する世界観に最も近いものはどれか。',
+        options: [
+          '　①人間は過去と未来に翻弄され、現在を生きることができない。', '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。', '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。', '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。', '　⑤時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
+        ]
+      }
+    ];
+  // ---------------------------------------------------------------------
+  /*
     ＜表示番号順＞
     グループ1…1→評価項目→2→評価項目→7→評価項目→8→評価項目
     グループ2…7→評価項目→8→評価項目→1→評価項目→2→評価項目
     グループ3…3→評価項目→4→評価項目→5→評価項目→6→評価項目
     グループ4…5→評価項目→6→評価項目→3→評価項目→4→評価項目
-    */
-    // ------------------------------------------------------------------------------
-    // 順番をランダマイズしたいので指定しておく
-    var trials = {
-      timeline: [],
-      //  timeline_variables: examPictures,
-      //  randomize_order: true,
-    };
+  */
 
-    var ExamPage1 = {
-      type: jsPsychHtmlButtonResponse,
-      stimulus: '(本番)これから物語が流れます。右耳から流れる音声に集中して，物語を追唱してください。追唱は完璧でなくても問題ありません。<br><br>',
-      choices: ['次へ'],
-    };
-
-    var Exam = {
-      type: jsPsychAudioButtonResponse,
-      response_allowed_while_playing: false,
-      stimulus: '',
-      choices: ['次へ'],
-      prompt: "<br><br>\
-      <br><br>再生が終わったら「次へ」を押してください。",
-    }
-
-    var ExamPage2 = {
-      type: jsPsychHtmlButtonResponse,
-      stimulus: '(本番)これで実験を終了です。　次に紙面で物語の確認テストを行います。　実験者からの支持をお待ちください。<br><br>',
-      choices: ['次へ'],
-    };
-
+    // 縦表示の質問群を作成
+    const Exam1Answer = []; // ここに出来上がる
+    MakeVerticalQuestions(Exam1Answer, Exam1Questions, Exam1Text) ;
     // 作成した問題1セットをキューイング
-    trials.timeline.push(ExamPage1, Exam, ExamPage2);
-    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    Trials.timeline.push(Exam1);
+    for (let i = 0; i < Exam1Answer.length; i++) { Trials.timeline.push(Exam1Answer[i]); }
+    Trials.timeline.push(QofFont);
+
+
 
     // ------------------------------------------------------------------------
     // 実験の開始
     // ------------------------------------------------------------------------
 
-    jsPsych.run([enter_fullscreen,Page1, Page2, Page3, PracticeTrials, exit_fullscreen,bye]);
-    //jsPsych.run([PracticeTrials,bye,exit_fullscreen]);
+    jsPsych.run([enter_fullscreen,PracticeTrials, Trials, exit_fullscreen,bye]);
+//    jsPsych.run([enter_fullscreen,Page1, Page2, Page3, PracticeTrials, Trials, exit_fullscreen,bye]);
     // ========================================================
     // プログラム本体の終わり
     // ========================================================
