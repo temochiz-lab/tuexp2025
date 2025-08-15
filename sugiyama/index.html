@@ -46,9 +46,9 @@
     }
   </script>
   <script>
-    // ========================================================
-    // プログラム本体
-    // ========================================================
+  // ======================================================
+  // プログラム本体
+  // ======================================================
     // 保存用のファイル名を生成
     function yyyymmddhhmise() {
       // 日付時間秒を文字列で返す	
@@ -64,11 +64,11 @@
       return (answer);
     }
 
-    // ------------------------------------------------------------------------
+  // ======================================================
     // 説明文やお約束のパーツ
     // グローバル変数
-    // ------------------------------------------------------------------------
-    var expname  = "sugiyama2025-0812-002-"             // 実験名
+  // ======================================================
+  var expname  = "sugiyama2025-0812-002-"             // 実験名
     var filename = expname + yyyymmddhhmise() + ".csv"; // 保存時のファイル名
     var stimulusDuration  = 120000 ;                    // 問題表示時間  2分(msec) 2 x 60 x 1000 = 120000
     var responseTimeLimit = 60000 ;                     // 回答制限時間  1分(msec) 1 x 60 x 1000 = 60000
@@ -98,6 +98,112 @@
       button_label: "開始",
       fullscreen_mode: true
     }
+
+  // ======================================================
+  // 縦表示の質問群を作成する
+  // ======================================================
+  function MakeVerticalQuestions(Answer, Questions) {
+    for (let i = 0; i < Questions.length; i++) {
+      Answer.push({
+        type: jsPsychSurveyMultiChoice,
+        button_label: '次へ',
+        // ▼「問題文を表示」ボタン＋モーダル本体を preamble に直埋め込み
+        preamble: `
+          <button id="show-problem" type="button">問題文を表示</button>
+
+          <!-- オーバーレイ -->
+          <div id="problem-overlay" style="
+            display:none; position:fixed; inset:0;
+            background:rgba(0,0,0,0.4); z-index:9998;"></div>
+
+          <!-- モーダル -->
+          <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="
+            display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
+            width:min(100vw, 1000px); max-height:80vh; overflow:auto;
+            background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25);
+            padding:20px; z-index:9999;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
+              <button id="close-problem" type="button">閉じる</button>
+            </div>
+            <div id="problem-content">
+              ${typeof PracticeExam1Text !== "undefined" ? PracticeExam1Text : ""}
+            </div>
+          </div>
+        `,
+        questions: [
+          {
+            prompt: Questions[i].prompt,
+            options: Questions[i].options,
+            required: false,
+            horizontal: false // 横並びにしない（縦書き表示の基礎）
+          }
+        ],
+        on_load: () => {
+          // --- 縦書きレイアウトの適用 ---
+          const style = document.createElement('style');
+          style.textContent = `
+            /* 全体を横並びにする */
+            .jspsych-survey-multi-choice {
+              display: flex;
+              flex-direction: row;
+              gap: 2em;
+            }
+            /* 質問文を縦書きに */
+            .jspsych-survey-multi-choice-question {
+              writing-mode: vertical-rl;
+              text-orientation: upright;
+            }
+            /* 選択肢部分も縦書きに */
+            .jspsych-survey-multi-choice-option label {
+              writing-mode: vertical-rl;
+              text-orientation: upright;
+            }
+            /* ボタンをセンタリング */
+            #jspsych-survey-multi-choice-next {
+              display: block;
+              margin: 2em auto;
+            }
+          `;
+          document.head.appendChild(style);
+
+          // --- モーダルの開閉 ---
+          const showBtn = document.getElementById('show-problem');
+          const overlay = document.getElementById('problem-overlay');
+          const modal = document.getElementById('problem-modal');
+          const closeBtn = document.getElementById('close-problem');
+
+          const open = () => {
+            if (overlay) overlay.style.display = 'block';
+            if (modal) modal.style.display = 'block';
+            if (overlay) overlay.setAttribute('aria-hidden', 'false');
+          };
+          const close = () => {
+            if (overlay) overlay.style.display = 'none';
+            if (modal) modal.style.display = 'none';
+            if (overlay) overlay.setAttribute('aria-hidden', 'true');
+          };
+
+          if (showBtn) showBtn.addEventListener('click', open);
+          if (closeBtn) closeBtn.addEventListener('click', close);
+          if (overlay) overlay.addEventListener('click', close);
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+          // --- 回答時間切れの処理 ---
+          const timer = setTimeout(() => {
+            const btn = document.querySelector('#jspsych-survey-multi-choice-next');
+            if (btn) btn.click();
+          }, typeof responseTimeLimit !== "undefined" ? responseTimeLimit : 60000); // デフォルト値も設定
+
+          // --- 手動クリック時にタイマー解除 ---
+          const nextBtn = document.querySelector('#jspsych-survey-multi-choice-next');
+          if (nextBtn) nextBtn.addEventListener('click', () => clearTimeout(timer), { once: true });
+        }
+      });
+    }
+  }
+  // ======================================================
+  // ここまで
+  // ======================================================
 
     // 実験の説明
     var Page1 = {
@@ -167,8 +273,6 @@
       auto_preload: true
     }
 
-    
-
     // 休憩(本番時には3分に)
     var resttime = {
       type: jsPsychHtmlKeyboardResponse,
@@ -178,14 +282,13 @@
       trial_duration: resttime_msec,
     };
 
-    // ---------------------------------------------------------------------
-    // 練習試行
-    // ---------------------------------------------------------------------
-
+  // ======================================================
+  // 練習試行
+  // ======================================================
     var PracticeTrials = {
       timeline: [],
     };
-
+  // ---------------------------------------------------------------------
     var PracticePage1 = {
       type: jsPsychHtmlButtonResponse,
       margin_vertical: '100px',
@@ -204,7 +307,7 @@
       <br><br></font></div>',
       choices: ['開始する'],
     };
-
+  // ---------------------------------------------------------------------
     var PracticeExam1Text = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
     時間とは、我々にとってどれほど確かなものだろうか。時計の針は均等に進むが、経験される時間は常にゆがみ、濃淡をもって流れる。それゆえ時間は、物理的事実であると同時に、意味づけられた現象でもある。つまり、時間は人によって「解釈される」ものであって、単に流れるものではない。\
@@ -213,7 +316,7 @@
     また未来は、希望や予測として現在に影を落とす。予想される未来は、現在の選択を方向づける。だがこの未来は、まだ訪れていない以上、想像の産物であり、その不確かさゆえに、現在を強く規定する。「今を生きる」という感覚すら、未来の予感を含んだ構造の中で生まれている。　\
     こうして、過去・現在・未来はいずれも固定されたものではなく、互いに交錯しながら意味を生成する。時間とは流れるものではなく、意味が構成される舞台であり、出来事が生じる順序ではなく、出来事が持ちうる価値をめぐる関係性なのである。すなわち、我々が時間を経験するとは、自己という存在の構成そのものを意味する。\
     </div></div>';
-
+  // ---------------------------------------------------------------------
     var PracticeExam1 = {
       type: jsPsychHtmlKeyboardResponse,
       margin_vertical: '100px',
@@ -222,7 +325,7 @@
       choices: 'q',
       trial_duration: stimulusDuration, // 前の方でグローバル変数で定義
     };
-
+  // ---------------------------------------------------------------------
     // 質問内容を配列で定義
     const practiceQuestions = [
       {
@@ -256,109 +359,11 @@
         ]
       }
     ];
-
-    // PracticeAnswer配列を作成
-    const PracticeAnswer = [];
-
-    for (let i = 0; i < practiceQuestions.length; i++) {
-      PracticeAnswer.push({
-        type: jsPsychSurveyMultiChoice,
-        button_label: '次へ',
-        // ▼「問題文を表示」ボタン＋モーダル本体を preamble に直埋め込み
-        preamble: `
-          <button id="show-problem" type="button">問題文を表示</button>
-
-          <!-- オーバーレイ -->
-          <div id="problem-overlay" style="
-            display:none; position:fixed; inset:0;
-            background:rgba(0,0,0,0.4); z-index:9998;"></div>
-
-          <!-- モーダル -->
-          <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="
-            display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-            width:min(100vw, 1000px); max-height:80vh; overflow:auto;
-            background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25);
-            padding:20px; z-index:9999;">
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
-              <button id="close-problem" type="button">閉じる</button>
-            </div>
-            <div id="problem-content">
-              ${PracticeExam1Text}
-            </div>
-          </div>
-        `,
-        questions: [
-          {
-            prompt: practiceQuestions[i].prompt,
-            options: practiceQuestions[i].options,
-            required: false,
-            horizontal: false // 横並びにしない（縦書き表示の基礎）
-          }
-        ],
-        on_load: () => {
-          // --- 縦書きレイアウトの適用（元コードをそのまま保持） ---
-          const style = document.createElement('style');
-          style.textContent = `
-            /* 全体を横並びにする */
-            .jspsych-survey-multi-choice {
-              display: flex;
-              flex-direction: row;
-              gap: 2em;
-            }
-            /* 質問文を縦書きに */
-            .jspsych-survey-multi-choice-question {
-              writing-mode: vertical-rl;
-              text-orientation: upright;
-            }
-            /* 選択肢部分も縦書きに */
-            .jspsych-survey-multi-choice-option label {
-              writing-mode: vertical-rl;
-              text-orientation: upright;
-            }
-            /* ボタンをセンタリング */
-            #jspsych-survey-multi-choice-next {
-              display: block;
-              margin: 2em auto;
-            }
-          `;
-          document.head.appendChild(style);
-
-          // --- モーダルの開閉 ---
-          const showBtn = document.getElementById('show-problem');
-          const overlay = document.getElementById('problem-overlay');
-          const modal = document.getElementById('problem-modal');
-          const closeBtn = document.getElementById('close-problem');
-
-          const open = () => {
-            overlay.style.display = 'block';
-            modal.style.display = 'block';
-            overlay.setAttribute('aria-hidden', 'false');
-          };
-          const close = () => {
-            overlay.style.display = 'none';
-            modal.style.display = 'none';
-            overlay.setAttribute('aria-hidden', 'true');
-          };
-
-          showBtn?.addEventListener('click', open);
-          closeBtn?.addEventListener('click', close);
-          overlay?.addEventListener('click', close);
-          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-
-          // --- 回答時間切れの処理 ---
-          const timer = setTimeout(() => {
-            const btn = document.querySelector('#jspsych-survey-multi-choice-next');
-            if (btn) btn.click();
-          }, responseTimeLimit);　 // 前の方でグローバル変数で定義
-
-          // --- 手動クリック時にタイマー解除 ---
-          const nextBtn = document.querySelector('#jspsych-survey-multi-choice-next');
-          if (nextBtn) nextBtn.addEventListener('click', () => clearTimeout(timer), { once: true });
-        }
-      });
-
-    }
-
+  // ---------------------------------------------------------------------
+    // 縦表示の質問群を作成
+    const PracticeAnswer = []; // ここに出来上がる
+    MakeVerticalQuestions(PracticeAnswer, practiceQuestions) ;
+  // ---------------------------------------------------------------------
     var QofFont_scale = [
       "全くそう思わない",
       "そう思わない",
@@ -366,7 +371,6 @@
       "そう思う",
       "非常にそう思う"
     ];
-
     var QofFont = {
       type: jsPsychSurveyLikert,
       button_label: "次へ",
@@ -385,6 +389,7 @@
         { prompt: "全体を読むのに必要な時間が短く感じた", name: 'Q11', labels: QofFont_scale },
       ],
     }
+  // ---------------------------------------------------------------------
 
     PracticeTrials.timeline.push(PracticePage1, PracticeExam1);
     // タイムラインに追加
