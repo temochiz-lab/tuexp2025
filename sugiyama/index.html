@@ -404,24 +404,28 @@
     var Trials = {
       timeline: [],
     };
+    var ExamText = [];       // 問題文(最初の表示とポップアップ用のテキスト)
+    var Exam = [] ;          // 最初の表示オブジェクト
+    var ExamQuestions = [] ; // 縦書き質問群
+    var ExamAnswer = [];    // 縦書き質問オブジェクト群（2次元配列）
 
   // ---------------------------------------------------------------------
-    var Exam1Text = '<div align="left" style="width:90%;margin:auto;">\
+    ExamText[1] = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
     文章① \
     </div></div>';
   // ---------------------------------------------------------------------
-    var Exam1 = {
+    Exam[1] = {
       type: jsPsychHtmlKeyboardResponse,
       margin_vertical: '100px',
       margin_horizontal: '100px',
-      stimulus: Exam1Text,
+      stimulus: ExamText[1],
       choices: 'q',
       trial_duration: stimulusDuration, // 前の方でグローバル変数で定義
     };
   // ---------------------------------------------------------------------
     // 質問内容を配列で定義
-    const Exam1Questions = [
+    ExamQuestions[1] = [
       {
         prompt: '問１ 筆者の主張として最も適切なのはどれか。',
         options: [
@@ -463,12 +467,13 @@
   */
 
     // 縦表示の質問群を作成
-    const Exam1Answer = []; // ここに出来上がる
-    MakeVerticalQuestions(Exam1Answer, Exam1Questions, Exam1Text) ;
+    ExamAnswer[1] = []; // ここに出来上がる、要初期化
+    MakeVerticalQuestions(ExamAnswer[1], ExamQuestions[1], ExamText[1]) ;
     // 作成した問題1セットをキューイング
-    Trials.timeline.push(Exam1);
-    for (let i = 0; i < Exam1Answer.length; i++) { Trials.timeline.push(Exam1Answer[i]); }
+    Trials.timeline.push(Exam[1]);
+    for (let i = 0; i < ExamAnswer[1].length; i++) { Trials.timeline.push(ExamAnswer[1][i]); }
     Trials.timeline.push(QofFont);
+
 
 
 
