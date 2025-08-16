@@ -26,8 +26,11 @@
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const pattern = urlParams.get('pattern');
-    const testmode = urlParams.get('test');
+    var testmode = urlParams.get('test');
     switch (pattern) {
+      case '0':
+        expsubject = "<font color=red>出題パターン 0(全部確認)</font>";
+        break;
       case '1':
         expsubject = "<font color=red>出題パターン 1</font>";
         break;
@@ -85,11 +88,12 @@
 
     // テストモード
     var testmodeText = '' ;
+//    testmode = 1 ; // ************************** 開発時のみ・後でコメント **************************
     if (testmode == '1' ) {
       testmodeText = " <font color = 'blue'>テストモード</font>" ;
-      stimulusDuration  = 5000 ;                      // 問題表示時間
-      responseTimeLimit = 5000 ;                      // 回答制限時間
-      resttime_msec     = 5000 ;                      // 休憩時間 3分(msec) 3 x 60 x 1000 = 180000
+      stimulusDuration  = 10000 ;                      // 問題表示時間10秒
+      responseTimeLimit = 10000 ;                      // 回答制限時間10秒
+      resttime_msec     = 10000 ;                      // 休憩時間10秒
     }
 
     // フルスクリーン開始
@@ -869,7 +873,15 @@
       }
     ];
 
-
+  // ---------------------------------------------------------------------
+  // 試行を1セット作成してキューイング
+  function addExamBlockToTimeline(ExamNumber) { 
+    Trials.timeline.push(Exam[ExamNumber]); // 問題呈示部分をキューイング
+    ExamAnswer[ExamNumber] = [];            // 縦書き質問群の配列を初期化
+    MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;             // 縦書き質問群を作成
+    for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); } // 縦書き質問群をキューイング
+    Trials.timeline.push(QofFont);          // フォントの感想をキューイング
+  } ;
   // ---------------------------------------------------------------------
   // 本番試行 引数?patternで指定したグループの出し分け
   // case '1': // グループ1 = 1→2→7→8
@@ -881,148 +893,37 @@
       // -----------------------------------------------------------------
       case '1': // グループ1 = 1→2→7→8
       default:
-        // 問題1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 1 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 2 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題7 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 7 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題8 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 8 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-
+        addExamBlockToTimeline(1) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(2) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(7) ; Trials.timeline.push(resttime); 
+        addExamBlockToTimeline(8) ; 
         break;
       // -----------------------------------------------------------------
       case '2': // グループ2 = 7→8→1→2
-        // 問題7 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 7 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題8 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 8 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題1 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 1 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題2 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 2 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-
-        break;
+        addExamBlockToTimeline(7) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(8) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(1) ; Trials.timeline.push(resttime); 
+        addExamBlockToTimeline(2) ; 
+      break;
       // -----------------------------------------------------------------
       case '3': // グループ3 = 3→4→5→6
-        // 問題3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 3 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 4 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題5 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 5 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題6 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 6 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-
+        addExamBlockToTimeline(3) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(4) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(5) ; Trials.timeline.push(resttime); 
+        addExamBlockToTimeline(6) ; 
         break;
       // -----------------------------------------------------------------
       case '4': // グループ4 = 5→6→3→4
-        // 問題5 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 5 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題6 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 6 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題3 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 3 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-        Trials.timeline.push(resttime);
-        // 問題4 - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-        ExamNumber = 4 ;
-        ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
-        Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
-        MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
-        for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-        Trials.timeline.push(QofFont);
-
-
+        addExamBlockToTimeline(5) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(6) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(3) ; Trials.timeline.push(resttime); 
+        addExamBlockToTimeline(4) ; 
         break;
+      case '0': // デバッグ用に全部
+        addExamBlockToTimeline(1) ; addExamBlockToTimeline(2) ; addExamBlockToTimeline(3) ; addExamBlockToTimeline(4) ;
+        addExamBlockToTimeline(5) ; addExamBlockToTimeline(6) ; addExamBlockToTimeline(7) ; addExamBlockToTimeline(8) ;
+      break ;
     } // switch ここまで
-
-
 
     // ------------------------------------------------------------------------
     // 実験の開始
