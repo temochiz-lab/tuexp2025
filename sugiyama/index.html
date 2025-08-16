@@ -104,6 +104,7 @@
   // 縦表示の質問群を作成する
   // ======================================================
   function MakeVerticalQuestions(Answer, Questions, PopupText) {
+    mustflag = true ;if (testmode ==1) mustflag = false; 
     for (let i = 0; i < Questions.length; i++) {
       Answer.push({
         type: jsPsychSurveyMultiChoice,
@@ -135,7 +136,7 @@
           {
             prompt: Questions[i].prompt,
             options: Questions[i].options,
-            required: false,
+            required: mustflag,
             horizontal: false // 横並びにしない（縦書き表示の基礎）
           }
         ],
@@ -223,17 +224,64 @@
       上記の趣旨をご理解いただいたうえで、どうぞ自然な形で課題にご参加ください。皆さまのご協力に深く感謝申し上げます。 <br>\
       <br></font></div>',
       choices: ['次へ'],
+      on_load: function () { // 以降、ctrl + q でスキップする
+        // すでに登録済みなら二重登録しない
+        if (!window.__globalCtrlQHandler) {
+          window.__globalCtrlQHandler = function (e) {
+            if (e.ctrlKey && (e.key === 'q' || e.key === 'Q')) {
+              e.preventDefault();
+
+              // 1) まず “次へ” ボタン類があればクリック
+              const selectors = [
+                '.jspsych-btn',
+                '#jspsych-survey-text-next',
+                '#jspsych-survey-multi-choice-next',
+                '#jspsych-survey-likert-next',
+                '.jspsych-html-button-response-button',
+                '.jspsych-audio-button-response-button'
+              ];
+              let clicked = false;
+              for (const sel of selectors) {
+                const btn = document.querySelector(sel);
+                if (btn) { btn.click(); clicked = true; break; }
+              }
+
+              // 2) ボタンが無いプラグイン（キーボード系など）の場合は強制終了
+              if (!clicked && typeof jsPsych !== 'undefined' && jsPsych.finishTrial) {
+                try { jsPsych.finishTrial(); } catch (_) {}
+              }
+            }
+          };
+          document.addEventListener('keydown', window.__globalCtrlQHandler, { passive: false });
+        }
+      }
     };
 
     // Facesheet / 被検者情報の入力 完成時には入力必須にしておく
+    mustflag = true ;if (testmode ==1) mustflag = false; 
     var Page2 = {
       type: jsPsychSurveyText,
       questions: [
-        { prompt: '学籍番号と年齢を入力してください。<br><br><br>あなたの学籍番号を入力してください。', columns: 5, required: false, name: 'age' },
-        { prompt: 'あなたの年齢を入力してください。', columns: 5, required: false, name: 'sex' },
+        { prompt: '学籍番号と年齢を入力してください。<br><br><br>あなたの学籍番号を入力してください。', columns: 5, required: mustflag, name: 'id' },
+        { prompt: 'あなたの年齢を入力してください。', columns: 5, required: mustflag, name: 'age' },
       ],
       button_label: '次へ',
-    };
+/*
+      on_load: function() {
+        document.addEventListener("keydown", function(e) {
+          if (e.ctrlKey && e.key === "q") {
+            e.preventDefault();  // ブラウザのデフォルト動作を無効化
+            document.querySelector(".jspsych-btn").click(); 
+            // これで「次へ」ボタンをクリックしたのと同じ処理になる
+          }
+        });
+      },
+*/      
+      on_finish: function() {
+        // ページを抜ける時にイベントを解除（他の trial に影響しないように）
+        document.removeEventListener("keydown", function(e){});
+      }
+  };
 
     var Page3 = {
       type: jsPsychHtmlButtonResponse,
@@ -372,22 +420,23 @@
       "そう思う",
       "非常にそう思う"
     ];
+    mustflag = true ;if (testmode ==1) mustflag = false; 
     var QofFont = {
       type: jsPsychSurveyLikert,
       button_label: "次へ",
       scale_width: 700,
       questions: [
-        { prompt: "文字がはっきり読める", name: 'Q01', labels: QofFont_scale },
-        { prompt: "文字がくっきり見える", name: 'Q02', labels: QofFont_scale },
-        { prompt: "文字の太さが適切だと感じた", name: 'Q03', labels: QofFont_scale },
-        { prompt: "語彙や表現の意味をすぐに理解できた", name: 'Q04', labels: QofFont_scale },
-        { prompt: "読んだ内容が頭に入りやすかった", name: 'Q05', labels: QofFont_scale },
-        { prompt: "読み終えた後内容を思い出せる", name: 'Q06', labels: QofFont_scale },
-        { prompt: "文章の要点を把握しやすかった", name: 'Q07', labels: QofFont_scale },
-        { prompt: "読むリズムが途切れにくかった", name: 'Q8', labels: QofFont_scale },
-        { prompt: "途中で立ち止まらずスムーズに読めた", name: 'Q9', labels: QofFont_scale },
-        { prompt: "読むスピードが速く感じた", name: 'Q10', labels: QofFont_scale },
-        { prompt: "全体を読むのに必要な時間が短く感じた", name: 'Q11', labels: QofFont_scale },
+        { prompt: "文字がはっきり読める", name: 'Q01', labels: QofFont_scale , required: mustflag},
+        { prompt: "文字がくっきり見える", name: 'Q02', labels: QofFont_scale , required: mustflag},
+        { prompt: "文字の太さが適切だと感じた", name: 'Q03', labels: QofFont_scale , required: mustflag},
+        { prompt: "語彙や表現の意味をすぐに理解できた", name: 'Q04', labels: QofFont_scale , required: mustflag},
+        { prompt: "読んだ内容が頭に入りやすかった", name: 'Q05', labels: QofFont_scale , required: mustflag},
+        { prompt: "読み終えた後内容を思い出せる", name: 'Q06', labels: QofFont_scale , required: mustflag},
+        { prompt: "文章の要点を把握しやすかった", name: 'Q07', labels: QofFont_scale , required: mustflag},
+        { prompt: "読むリズムが途切れにくかった", name: 'Q8', labels: QofFont_scale , required: mustflag},
+        { prompt: "途中で立ち止まらずスムーズに読めた", name: 'Q9', labels: QofFont_scale , required: mustflag},
+        { prompt: "読むスピードが速く感じた", name: 'Q10', labels: QofFont_scale , required: mustflag},
+        { prompt: "全体を読むのに必要な時間が短く感じた", name: 'Q11', labels: QofFont_scale , required: mustflag},
       ],
     }
   // ---------------------------------------------------------------------
@@ -969,6 +1018,7 @@
         for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
         Trials.timeline.push(QofFont);
 
+
         break;
     } // switch ここまで
 
@@ -979,6 +1029,7 @@
     // ------------------------------------------------------------------------
 
     jsPsych.run([enter_fullscreen,Page1, Page2, Page3,PracticeTrials, Trials, exit_fullscreen,bye]);
+//    jsPsych.run([enter_fullscreen,Page1, Page2, Page3, PracticeTrials, Trials, exit_fullscreen,bye]);
     // ========================================================
     // プログラム本体の終わり
     // ========================================================
