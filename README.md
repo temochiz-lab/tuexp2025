@@ -7,13 +7,18 @@
 
 ## 起動方法
 
-### 1) ファイルを直接開く
-`index.html` を **Chrome**（推奨）で開きます。  
-（推奨ブラウザ：Chrome / Edge の最新版）
-
-### 2) 簡易サーバで起動（推奨）
-ネットワークやフルスクリーンの制約を回避しやすく、動作が安定します。 
-(Github Pagesを使っています)
+### 1) 本番用
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=1 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=2 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=3 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=4 
+ 
+### 2) テスト用
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=1&test=1 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=2&test=1 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=3&test=1 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=4&test=1 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=0&test=1 
 
 
 ## Usage（URL 引数）
@@ -32,11 +37,13 @@ index.html?pattern=<番号>&test=<0|1>
   * `2` … 7 → 8 → 1 → 2
   * `3` … 3 → 4 → 5 → 6
   * `4` … 5 → 6 → 3 → 4
+  * `0` … 1 → 2 → 3 → 4 → 5 → 6 → 7 → 8(確認用)
+
 
 * **test**（テストモード切替）
 
   * `0` … 本番モード（読解120秒 / 設問60秒 / 休憩180秒）
-  * `1` … テストモード（読解5秒 / 設問5秒 / 休憩5秒、必須回答オフ）
+  * `1` … テストモード（読解10秒 / 設問10秒 / 休憩10秒、必須回答オフ）
 
 ---
 
