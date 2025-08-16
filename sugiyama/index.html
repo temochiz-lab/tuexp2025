@@ -413,22 +413,23 @@
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // 問題1
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamText[1] = '<div align="left" style="width:90%;margin:auto;">\
+  ExamNumber = 1 ; // koko
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章① \
+    文章１ \
     </div></div>';
   // ---------------------------------------------------------------------
-    Exam[1] = { 
+    Exam[ExamNumber] = { 
       type: jsPsychHtmlKeyboardResponse,
       margin_vertical: '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[1],
+      stimulus: ExamText[ExamNumber],
       choices: 'q',
-      trial_duration: stimulusDuration, // 前の方でグローバル変数で定義
+      trial_duration: stimulusDuration, // 前のグローバル変数で定義
     };
   // ---------------------------------------------------------------------
     // 質問内容を配列で定義
-    ExamQuestions[1] = [
+    ExamQuestions[ExamNumber] = [
       {
         prompt: '問１１ 筆者の主張として最も適切なのはどれか。',
         options: [
@@ -463,22 +464,23 @@
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   // 問題2
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamText[2] = '<div align="left" style="width:90%;margin:auto;">\
+  ExamNumber = 2 ; // koko
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章② \
+    文章２ \
     </div></div>';
   // ---------------------------------------------------------------------
-    Exam[2] = { 
+    Exam[ExamNumber] = { 
       type: jsPsychHtmlKeyboardResponse,
       margin_vertical: '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[2],
+      stimulus: ExamText[ExamNumber],
       choices: 'q',
-      trial_duration: stimulusDuration, // 前の方でグローバル変数で定義
+      trial_duration: stimulusDuration, // 前のグローバル変数で定義
     };
   // ---------------------------------------------------------------------
     // 質問内容を配列で定義
-    ExamQuestions[2] = [
+    ExamQuestions[ExamNumber] = [
       {
         prompt: '問２１ 筆者の主張として最も適切なのはどれか。',
         options: [
@@ -510,6 +512,312 @@
         ]
       }
     ];
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // 問題3
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ExamNumber = 3 ; // koko
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+    文章３ \
+    </div></div>';
+  // ---------------------------------------------------------------------
+    Exam[ExamNumber] = { 
+      type: jsPsychHtmlKeyboardResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: ExamText[ExamNumber],
+      choices: 'q',
+      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+    };
+  // ---------------------------------------------------------------------
+    // 質問内容を配列で定義
+    ExamQuestions[ExamNumber] = [
+      {
+        prompt: '問３１ 筆者の主張として最も適切なのはどれか。',
+        options: [
+          '　①時間は人間の記憶によって直線的に捉えられる。', '　②出来事の意味は、経験の瞬間に確定する。', '　③時間とは、物理的現象というより意味の構造である。', '　④過去は変えられない以上、意味も固定的である。', '　⑤未来を考えることは現在の妨げとなる。'
+        ]
+      },
+      {
+        prompt: '問３２「意味が時間を遡って形成される」とはどういうことか。',
+        options: [
+          '　①意味ある出来事は予め予定されているという思想である。', '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。', '　③時間は常に因果に従って進行するという認識である。', '　④過去は未来の視点からのみ語られるという決定論である。', '　⑤出来事の価値は、その時点での感情によって固定される。 '
+        ]
+      },
+      {
+        prompt: '問３３ 本文の内容に最も合致する考え方はどれか。',
+        options: [
+          '　①記憶は過去を忠実に保持する重要な情報資源である。', '　②意味の再構成により、過去の出来事も変化しうる。', '　③未来に希望をもたぬ者は、時間を経験することができない。', '　④現在を理解するには、まず未来を捨てる必要がある。', '　⑤出来事の意味は、発生の順序に従って変化する。'
+        ]
+      },
+      {
+        prompt: '問３４ 本文における「未来」の特徴として最も適切なのはどれか。',
+        options: [
+          '　①客観的予測によって構成される安定した領域である。', '　②現在に対して価値中立的に作用する想念である。', '　③想像にすぎないが、現在の行動に実質的影響を与える。', '　④過去の反復としてのみ捉えられる時間の残響である。', '　⑤意識されることなく到来する、偶然性の領域である。'
+        ]
+      },
+      {
+        prompt: '問３５ 本文に通底する世界観に最も近いものはどれか。',
+        options: [
+          '　①人間は過去と未来に翻弄され、現在を生きることができない。', '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。', '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。', '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。', '　⑤時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
+        ]
+      }
+    ];
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // 問題4
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ExamNumber = 4 ; // koko
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+    文章４ \
+    </div></div>';
+  // ---------------------------------------------------------------------
+    Exam[ExamNumber] = { 
+      type: jsPsychHtmlKeyboardResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: ExamText[ExamNumber],
+      choices: 'q',
+      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+    };
+  // ---------------------------------------------------------------------
+    // 質問内容を配列で定義
+    ExamQuestions[ExamNumber] = [
+      {
+        prompt: '問４１ 筆者の主張として最も適切なのはどれか。',
+        options: [
+          '　①時間は人間の記憶によって直線的に捉えられる。', '　②出来事の意味は、経験の瞬間に確定する。', '　③時間とは、物理的現象というより意味の構造である。', '　④過去は変えられない以上、意味も固定的である。', '　⑤未来を考えることは現在の妨げとなる。'
+        ]
+      },
+      {
+        prompt: '問４２「意味が時間を遡って形成される」とはどういうことか。',
+        options: [
+          '　①意味ある出来事は予め予定されているという思想である。', '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。', '　③時間は常に因果に従って進行するという認識である。', '　④過去は未来の視点からのみ語られるという決定論である。', '　⑤出来事の価値は、その時点での感情によって固定される。 '
+        ]
+      },
+      {
+        prompt: '問４３ 本文の内容に最も合致する考え方はどれか。',
+        options: [
+          '　①記憶は過去を忠実に保持する重要な情報資源である。', '　②意味の再構成により、過去の出来事も変化しうる。', '　③未来に希望をもたぬ者は、時間を経験することができない。', '　④現在を理解するには、まず未来を捨てる必要がある。', '　⑤出来事の意味は、発生の順序に従って変化する。'
+        ]
+      },
+      {
+        prompt: '問４４ 本文における「未来」の特徴として最も適切なのはどれか。',
+        options: [
+          '　①客観的予測によって構成される安定した領域である。', '　②現在に対して価値中立的に作用する想念である。', '　③想像にすぎないが、現在の行動に実質的影響を与える。', '　④過去の反復としてのみ捉えられる時間の残響である。', '　⑤意識されることなく到来する、偶然性の領域である。'
+        ]
+      },
+      {
+        prompt: '問４５ 本文に通底する世界観に最も近いものはどれか。',
+        options: [
+          '　①人間は過去と未来に翻弄され、現在を生きることができない。', '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。', '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。', '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。', '　⑤時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
+        ]
+      }
+    ];
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // 問題5
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ExamNumber = 5 ; // koko
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+    文章５ \
+    </div></div>';
+  // ---------------------------------------------------------------------
+    Exam[ExamNumber] = { 
+      type: jsPsychHtmlKeyboardResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: ExamText[ExamNumber],
+      choices: 'q',
+      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+    };
+  // ---------------------------------------------------------------------
+    // 質問内容を配列で定義
+    ExamQuestions[ExamNumber] = [
+      {
+        prompt: '問５１ 筆者の主張として最も適切なのはどれか。',
+        options: [
+          '　①時間は人間の記憶によって直線的に捉えられる。', '　②出来事の意味は、経験の瞬間に確定する。', '　③時間とは、物理的現象というより意味の構造である。', '　④過去は変えられない以上、意味も固定的である。', '　⑤未来を考えることは現在の妨げとなる。'
+        ]
+      },
+      {
+        prompt: '問５２「意味が時間を遡って形成される」とはどういうことか。',
+        options: [
+          '　①意味ある出来事は予め予定されているという思想である。', '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。', '　③時間は常に因果に従って進行するという認識である。', '　④過去は未来の視点からのみ語られるという決定論である。', '　⑤出来事の価値は、その時点での感情によって固定される。 '
+        ]
+      },
+      {
+        prompt: '問５３ 本文の内容に最も合致する考え方はどれか。',
+        options: [
+          '　①記憶は過去を忠実に保持する重要な情報資源である。', '　②意味の再構成により、過去の出来事も変化しうる。', '　③未来に希望をもたぬ者は、時間を経験することができない。', '　④現在を理解するには、まず未来を捨てる必要がある。', '　⑤出来事の意味は、発生の順序に従って変化する。'
+        ]
+      },
+      {
+        prompt: '問５４ 本文における「未来」の特徴として最も適切なのはどれか。',
+        options: [
+          '　①客観的予測によって構成される安定した領域である。', '　②現在に対して価値中立的に作用する想念である。', '　③想像にすぎないが、現在の行動に実質的影響を与える。', '　④過去の反復としてのみ捉えられる時間の残響である。', '　⑤意識されることなく到来する、偶然性の領域である。'
+        ]
+      },
+      {
+        prompt: '問５５ 本文に通底する世界観に最も近いものはどれか。',
+        options: [
+          '　①人間は過去と未来に翻弄され、現在を生きることができない。', '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。', '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。', '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。', '　⑤時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
+        ]
+      }
+    ];
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // 問題6
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ExamNumber = 6 ; // koko
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+    文章６ \
+    </div></div>';
+  // ---------------------------------------------------------------------
+    Exam[ExamNumber] = { 
+      type: jsPsychHtmlKeyboardResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: ExamText[ExamNumber],
+      choices: 'q',
+      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+    };
+  // ---------------------------------------------------------------------
+    // 質問内容を配列で定義
+    ExamQuestions[ExamNumber] = [
+      {
+        prompt: '問６１ 筆者の主張として最も適切なのはどれか。',
+        options: [
+          '　①時間は人間の記憶によって直線的に捉えられる。', '　②出来事の意味は、経験の瞬間に確定する。', '　③時間とは、物理的現象というより意味の構造である。', '　④過去は変えられない以上、意味も固定的である。', '　⑤未来を考えることは現在の妨げとなる。'
+        ]
+      },
+      {
+        prompt: '問６２「意味が時間を遡って形成される」とはどういうことか。',
+        options: [
+          '　①意味ある出来事は予め予定されているという思想である。', '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。', '　③時間は常に因果に従って進行するという認識である。', '　④過去は未来の視点からのみ語られるという決定論である。', '　⑤出来事の価値は、その時点での感情によって固定される。 '
+        ]
+      },
+      {
+        prompt: '問６３ 本文の内容に最も合致する考え方はどれか。',
+        options: [
+          '　①記憶は過去を忠実に保持する重要な情報資源である。', '　②意味の再構成により、過去の出来事も変化しうる。', '　③未来に希望をもたぬ者は、時間を経験することができない。', '　④現在を理解するには、まず未来を捨てる必要がある。', '　⑤出来事の意味は、発生の順序に従って変化する。'
+        ]
+      },
+      {
+        prompt: '問６４ 本文における「未来」の特徴として最も適切なのはどれか。',
+        options: [
+          '　①客観的予測によって構成される安定した領域である。', '　②現在に対して価値中立的に作用する想念である。', '　③想像にすぎないが、現在の行動に実質的影響を与える。', '　④過去の反復としてのみ捉えられる時間の残響である。', '　⑤意識されることなく到来する、偶然性の領域である。'
+        ]
+      },
+      {
+        prompt: '問６５ 本文に通底する世界観に最も近いものはどれか。',
+        options: [
+          '　①人間は過去と未来に翻弄され、現在を生きることができない。', '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。', '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。', '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。', '　⑤時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
+        ]
+      }
+    ];
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // 問題7
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ExamNumber = 7 ; // koko
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+    文章７ \
+    </div></div>';
+  // ---------------------------------------------------------------------
+    Exam[ExamNumber] = { 
+      type: jsPsychHtmlKeyboardResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: ExamText[ExamNumber],
+      choices: 'q',
+      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+    };
+  // ---------------------------------------------------------------------
+    // 質問内容を配列で定義
+    ExamQuestions[ExamNumber] = [
+      {
+        prompt: '問７１ 筆者の主張として最も適切なのはどれか。',
+        options: [
+          '　①時間は人間の記憶によって直線的に捉えられる。', '　②出来事の意味は、経験の瞬間に確定する。', '　③時間とは、物理的現象というより意味の構造である。', '　④過去は変えられない以上、意味も固定的である。', '　⑤未来を考えることは現在の妨げとなる。'
+        ]
+      },
+      {
+        prompt: '問７２「意味が時間を遡って形成される」とはどういうことか。',
+        options: [
+          '　①意味ある出来事は予め予定されているという思想である。', '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。', '　③時間は常に因果に従って進行するという認識である。', '　④過去は未来の視点からのみ語られるという決定論である。', '　⑤出来事の価値は、その時点での感情によって固定される。 '
+        ]
+      },
+      {
+        prompt: '問７３ 本文の内容に最も合致する考え方はどれか。',
+        options: [
+          '　①記憶は過去を忠実に保持する重要な情報資源である。', '　②意味の再構成により、過去の出来事も変化しうる。', '　③未来に希望をもたぬ者は、時間を経験することができない。', '　④現在を理解するには、まず未来を捨てる必要がある。', '　⑤出来事の意味は、発生の順序に従って変化する。'
+        ]
+      },
+      {
+        prompt: '問７４ 本文における「未来」の特徴として最も適切なのはどれか。',
+        options: [
+          '　①客観的予測によって構成される安定した領域である。', '　②現在に対して価値中立的に作用する想念である。', '　③想像にすぎないが、現在の行動に実質的影響を与える。', '　④過去の反復としてのみ捉えられる時間の残響である。', '　⑤意識されることなく到来する、偶然性の領域である。'
+        ]
+      },
+      {
+        prompt: '問７５ 本文に通底する世界観に最も近いものはどれか。',
+        options: [
+          '　①人間は過去と未来に翻弄され、現在を生きることができない。', '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。', '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。', '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。', '　⑤時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
+        ]
+      }
+    ];
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  // 問題8
+  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+  ExamNumber = 8 ; // koko
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+    文章８ \
+    </div></div>';
+  // ---------------------------------------------------------------------
+    Exam[ExamNumber] = { 
+      type: jsPsychHtmlKeyboardResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: ExamText[ExamNumber],
+      choices: 'q',
+      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+    };
+  // ---------------------------------------------------------------------
+    // 質問内容を配列で定義
+    ExamQuestions[ExamNumber] = [
+      {
+        prompt: '問８１ 筆者の主張として最も適切なのはどれか。',
+        options: [
+          '　①時間は人間の記憶によって直線的に捉えられる。', '　②出来事の意味は、経験の瞬間に確定する。', '　③時間とは、物理的現象というより意味の構造である。', '　④過去は変えられない以上、意味も固定的である。', '　⑤未来を考えることは現在の妨げとなる。'
+        ]
+      },
+      {
+        prompt: '問８２「意味が時間を遡って形成される」とはどういうことか。',
+        options: [
+          '　①意味ある出来事は予め予定されているという思想である。', '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。', '　③時間は常に因果に従って進行するという認識である。', '　④過去は未来の視点からのみ語られるという決定論である。', '　⑤出来事の価値は、その時点での感情によって固定される。 '
+        ]
+      },
+      {
+        prompt: '問８３ 本文の内容に最も合致する考え方はどれか。',
+        options: [
+          '　①記憶は過去を忠実に保持する重要な情報資源である。', '　②意味の再構成により、過去の出来事も変化しうる。', '　③未来に希望をもたぬ者は、時間を経験することができない。', '　④現在を理解するには、まず未来を捨てる必要がある。', '　⑤出来事の意味は、発生の順序に従って変化する。'
+        ]
+      },
+      {
+        prompt: '問８４ 本文における「未来」の特徴として最も適切なのはどれか。',
+        options: [
+          '　①客観的予測によって構成される安定した領域である。', '　②現在に対して価値中立的に作用する想念である。', '　③想像にすぎないが、現在の行動に実質的影響を与える。', '　④過去の反復としてのみ捉えられる時間の残響である。', '　⑤意識されることなく到来する、偶然性の領域である。'
+        ]
+      },
+      {
+        prompt: '問８５ 本文に通底する世界観に最も近いものはどれか。',
+        options: [
+          '　①人間は過去と未来に翻弄され、現在を生きることができない。', '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。', '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。', '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。', '　⑤時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
+        ]
+      }
+    ];
 
 
   // ---------------------------------------------------------------------
@@ -528,7 +836,8 @@
     Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
     MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
     for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
-    Trials.timeline.push(QofFont, resttime);
+    Trials.timeline.push(QofFont);
+    Trials.timeline.push(resttime);
     // 問題2
     ExamNumber = 2 ;
     ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
@@ -536,11 +845,55 @@
     MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
     for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
     Trials.timeline.push(QofFont);
-    Trials.timeline.push(QofFont, resttime);
-
-
-
-
+    Trials.timeline.push(resttime);
+    // 問題3
+    ExamNumber = 3 ;
+    ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
+    Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
+    MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
+    for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
+    Trials.timeline.push(QofFont);
+    Trials.timeline.push(resttime);
+    // 問題4
+    ExamNumber = 4 ;
+    ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
+    Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
+    MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
+    for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
+    Trials.timeline.push(QofFont);
+    Trials.timeline.push(resttime);
+    // 問題5
+    ExamNumber = 5 ;
+    ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
+    Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
+    MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
+    for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
+    Trials.timeline.push(QofFont);
+    Trials.timeline.push(resttime);
+    // 問題6
+    ExamNumber = 6 ;
+    ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
+    Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
+    MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
+    for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
+    Trials.timeline.push(QofFont);
+    Trials.timeline.push(resttime);
+    // 問題7
+    ExamNumber = 7 ;
+    ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
+    Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
+    MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
+    for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
+    Trials.timeline.push(QofFont);
+    Trials.timeline.push(resttime);
+    // 問題8
+    ExamNumber = 8 ;
+    ExamAnswer[ExamNumber] = []; // ここに出来上がる、要初期化
+    Trials.timeline.push(Exam[ExamNumber]);　// 作成した問題1セットをキューイング
+    MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;
+    for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); }
+    Trials.timeline.push(QofFont);
+    Trials.timeline.push(resttime);
 
     // ------------------------------------------------------------------------
     // 実験の開始
