@@ -8,17 +8,17 @@
 ## 起動方法
 
 ### 1) 本番用
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=1 
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=2 
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=3 
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=4 
- 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=1  
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=2  
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=3  
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=4  
+  
 ### 2) テスト用
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=1&test=1 
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=2&test=1 
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=3&test=1 
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=4&test=1 
-https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=0&test=1 
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=1&test=1  
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=2&test=1  
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=3&test=1  
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=4&test=1  
+https://temochiz-lab.github.io/tuexp2025/sugiyama/?pattern=0&test=1  
 
 
 ## Usage（URL 引数）
