@@ -117,15 +117,15 @@
         preamble: `
           <button id="show-problem" type="button">問題文を表示</button>
 
-          <!-- オーバーレイ -->
+          <!-- ポップアップ(オーバーレイ) -->
           <div id="problem-overlay" style="
             display:none; position:fixed; inset:0;
             background:rgba(0,0,0,0.4); z-index:9998;"></div>
 
-          <!-- モーダル -->
+          <!-- モーダル 横幅が足りないときは width で変更-->
           <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="
             display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-            width:min(100vw, 1000px); max-height:80vh; overflow:auto;
+            width:min(100vw, 1100px); max-height:80vh; overflow:auto;
             background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25);
             padding:20px; z-index:9999;">
             <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
@@ -349,7 +349,8 @@
   // ---------------------------------------------------------------------
     var PracticeExam1Text = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    春のある日、私は友人の佐藤と新しくできた商店街を歩いていた。小さな雑貨屋やカフェが並び、通りには甘い匂いが漂っている。佐藤は以前からこの場所をチェックしていたらしく、「ここのパン屋は評判らしいよ」と笑顔で言った。店先には焼き立てのクロワッサンが並び、ガラス越しに見える厨房では、職人が丁寧に生地を成形している。私たちは迷わず中に入り、それぞれ好きなパンを選んだ。私はチョコレート入り、佐藤はハムとチーズのサンドだ。店内の窓際席に座り、温かい紅茶と一緒に味わう。口に広がる甘みと香ばしさは、何とも言えない幸福感をもたらした。 \
+    練習問題<br> \
+      春のある日、私は友人の佐藤と新しくできた商店街を歩いていた。小さな雑貨屋やカフェが並び、通りには甘い匂いが漂っている。佐藤は以前からこの場所をチェックしていたらしく、「ここのパン屋は評判らしいよ」と笑顔で言った。店先には焼き立てのクロワッサンが並び、ガラス越しに見える厨房では、職人が丁寧に生地を成形している。私たちは迷わず中に入り、それぞれ好きなパンを選んだ。私はチョコレート入り、佐藤はハムとチーズのサンドだ。店内の窓際席に座り、温かい紅茶と一緒に味わう。口に広がる甘みと香ばしさは、何とも言えない幸福感をもたらした。 \
     \
     食後、私たちは近くの古本屋に立ち寄った。棚には古びた装丁の小説や、昭和時代の雑誌が整然と並んでいる。佐藤は旅行記を手に取り、ページをめくる手が止まらない様子だった。私は表紙に引かれて、あるエッセイ集を手に取った。読み進めると、著者が旅先で出会った人々の温かさが静かに綴られていた。その文章に心を動かされ、私は思わず購入を決めた。 \
     \
@@ -479,7 +480,7 @@
   ExamNumber = 1 ; // koko
   ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章１ \
+    文章１<br> \
     時間とは、我々にとってどれほど確かなものだろうか。時計の針は均等に進むが、経験される時間は常にゆがみ、濃淡をもって流れる。それゆえ時間は、物理的事実であると同時に、意味づけられた現象でもある。つまり、時間は人によって「解釈される」ものであって、単に流れるものではない。\
     ある出来事が意味をもつのは、しばしばそれが過去となってからである。経験の真っ只中では、その価値や位置づけは不明瞭だが、後になって文脈の中に配置されることで「意味ある出来事」となる。ここには、意味が時間を遡って形成されるという逆流的構造がある。　\
     だがこの逆流は、時間の一方向性と矛盾する。過去は変わらないはずだが、意味は後から与えられる以上、我々の現在は絶えず過去を書き換えているとも言える。記憶は事実を保存するのではなく、現在の自己にとっての妥当性に基づいて再構成される。すなわち、時間の流れは直線的であっても、意味の流れは循環的である。　　　　　\
@@ -555,7 +556,7 @@
   ExamNumber = 2 ; // koko
   ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章２ \
+    文章２<br> \
     制度とは、秩序を確保するために設計された枠組みである。だがそれが機能するのは、人々が自らを制度に従属させることを選ぶときだけである。この選択は、しばしば無意識に行われ、制度はあたかも当然の前提として受け入れられる。こうして制度は、人間の行動を規定するのではなく、人間が自らを規定可能な存在として振る舞うことによって成立する。 \
     一方で、制度が前提とする秩序は常に逸脱の可能性に晒されている。すべての制度は、それによって排除されるもの、つまり逸脱を含むことで初めて輪郭を持つ。逸脱がなければ制度は可視化されない。むしろ逸脱が制度の存在を逆説的に明らかにする。逸脱は秩序の敵ではなく、秩序が秩序として自覚される契機である。 \
     また逸脱は、単なる制度の否定ではない。それは制度の限界を露呈させ、時に制度の内部から制度を刷新する力ともなる。制度は、逸脱によって批判され、再定義され、延命される。制度に対する盲目的服従は制度を腐敗させるが、絶え間ない逸脱が制度を鍛える。制度と逸脱は対立ではなく、共依存の関係にある。 \
@@ -578,50 +579,50 @@
         prompt: '問１ 筆者の主張として最も適切なのはどれか。',
         options: [
           '　① 制度は人間によって管理されるべき絶対的枠組みである。', 
-          '　', 
-          '　', 
-          '　', 
-          '　'
+          '　② 制度とは逸脱の排除によってのみ成立するものである。', 
+          '　③ 逸脱は制度の敵であり、徹底的に無化されるべきである。', 
+          '　④ 制度は逸脱によって可視化され、時に刷新される。', 
+          '　⑤ 制度の持続は、逸脱を厳格に管理する能力にかかっている。'
         ]
       },
       {
-        prompt: '問２',
+        prompt: '問２ 本文によれば、逸脱が制度を明らかにするのはなぜか。',
         options: [
-          '　①', 
-          '　②', 
-          '　③', 
-          '　④', 
-          '　⑤'
+          '　① 逸脱は制度の内在的矛盾を具体的に示すため。', 
+          '　② 逸脱は制度の成員からの信頼を失墜させるため。', 
+          '　③ 制度の論理は逸脱の処理に失敗するから。', 
+          '　④ 逸脱が制度の適用範囲の拡張を可能にするから。', 
+          '　⑤ 逸脱がなければ制度の存在そのものが意識されないから。 '
         ]
       },
       {
-        prompt: '問３',
+        prompt: '問３ 本文の論理から導かれる考えに最も近いものはどれか。',
         options: [
-          '　①', 
-          '　②', 
-          '　③', 
-          '　④', 
-          '　⑤'
+          '　① 制度は完全でなければ正当化されない。', 
+          '　② 逸脱が制度の枠内に収まらない限り、それは社会的脅威である。', 
+          '　③ 制度は逸脱を経験することで進化する可能性を持つ。', 
+          '　④ 制度の正統性は、多数派による支持に依存する。', 
+          '　⑤ 逸脱は制度と断絶した全く別の論理に基づいている。 '
         ]
       },
       {
-        prompt: '問４',
+        prompt: '問４ 本文において「制度の防衛機構」として示唆されているのはどれか。',
         options: [
-          '　①', 
-          '　②', 
-          '　③', 
-          '　④', 
-          '　⑤'
+          '　① 逸脱を異常と見なして個人の問題に還元する構造', 
+          '　② 制度を批判的に捉え直す社会的合意形成の機構', 
+          '　③ 逸脱を制度に取り込むための法的整備のこと', 
+          '　④ 逸脱者を制度の維持者として再配置すること', 
+          '　⑤ 逸脱が制度外にあるという前提そのものを否定すること '
         ]
       },
       {
-        prompt: '問５',
+        prompt: '問５ 本文全体に共通する制度観として最も適切なのはどれか。',
         options: [
-          '　①', 
-          '　②', 
-          '　③', 
-          '　④', 
-          '　⑤'
+          '　① 制度は逸脱を排除することで秩序を保つ防壁である。', 
+          '　② 制度は固定的であり、逸脱はそれと常に敵対する。', 
+          '　③ 制度と逸脱は相互に依存し、制度の変化を可能にする。', 
+          '　④ 制度の本質は逸脱を許容しない厳密な論理にある。', 
+          '　⑤ 制度は人間の本性に反する人工的な構造である。 '
         ]
       }
     ];
@@ -631,7 +632,7 @@
   ExamNumber = 3 ; // koko
   ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章３ \
+    文章３<br> \
     </div></div>';
   // ---------------------------------------------------------------------
     Exam[ExamNumber] = { 
@@ -702,7 +703,7 @@
   ExamNumber = 4 ; // koko
   ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章４ \
+    文章４<br> \
     </div></div>';
   // ---------------------------------------------------------------------
     Exam[ExamNumber] = { 
@@ -771,9 +772,9 @@
   // 問題5
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ExamNumber = 5 ; // koko
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章５ \
+  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;"> \
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
+    文章５<br> \
     </div></div>';
   // ---------------------------------------------------------------------
     Exam[ExamNumber] = { 
@@ -843,8 +844,8 @@
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ExamNumber = 6 ; // koko
   ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章６ \
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
+    文章６<br> \
     </div></div>';
   // ---------------------------------------------------------------------
     Exam[ExamNumber] = { 
@@ -914,8 +915,8 @@
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ExamNumber = 7 ; // koko
   ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章７ \
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
+    文章７<br> \
     </div></div>';
   // ---------------------------------------------------------------------
     Exam[ExamNumber] = { 
@@ -985,8 +986,8 @@
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
   ExamNumber = 8 ; // koko
   ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章８ \
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
+    文章８<br> \
     </div></div>';
   // ---------------------------------------------------------------------
     Exam[ExamNumber] = { 
