@@ -523,16 +523,17 @@
   // ---------------------------------------------------------------------
  
  // 文章を読んでの設問1-5を作成。　ここだけ質問紙を使うので、ラベルをつけてわかるように表示する
-  function MakeQuestion5(argLabel, argPopupText) {
-  var Question5_scale = ["１", "２", "３", "４", "５"];
-  var Question5 = {
+ function MakeQuestion5(argLabel, argPopupText) {
+  const Question5_scale = ["１", "２", "３", "４", "５"];
+
+  const Question5 = {
     type: jsPsychSurveyLikert,
     button_label: "次へ",
     scale_width: 700,
     preamble: argLabel + `<br><br>
       <button id="show-problem" type="button">問題文を表示</button>
       <div id="problem-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9998;"></div>
-      <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:min(100vw, 1100px); max-height:80vh; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25); padding:20px; z-index:9999;">
+      <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:min(100vw, 1150px); max-height:80vh; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25); padding:20px; z-index:9999;">
         <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
           <button id="close-problem" type="button">閉じる</button>
         </div>
@@ -547,7 +548,6 @@
       { prompt: "問題５", name: 'Q11', labels: Question5_scale, required: false }
     ],
     on_load: function () {
-      // モーダル開閉
       const showBtn = document.getElementById('show-problem');
       const overlay = document.getElementById('problem-overlay');
       const modal = document.getElementById('problem-modal');
@@ -567,12 +567,27 @@
       overlay.addEventListener('click', close);
       document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
 
-      // タイムアウトで強制的に trial を終了
-      setTimeout(() => {
-        jsPsych.finishTrial(); // ← 自動送りの本質はここ
+      // --- タイマー開始＆IDを trial に保存 ---
+      const id = setTimeout(() => {
+        jsPsych.finishTrial();
       }, responseTimeLimit);
+      jsPsych.getCurrentTrial()._timeoutId = id; // ← ここがポイント！
+
+      // 「次へ」クリックでタイマーをキャンセル
+      const nextBtn = document.querySelector('button[type="submit"]');
+      if (nextBtn) {
+        nextBtn.addEventListener('click', () => clearTimeout(id), { once: true });
+      }
+    },
+    on_finish: function () {
+      // --- 念のため、試行終了時にもタイマーを解除 ---
+      const trial = jsPsych.getCurrentTrial();
+      if (trial._timeoutId) {
+        clearTimeout(trial._timeoutId);
+      }
     }
   };
+
   return Question5;
 }
 
@@ -1019,12 +1034,23 @@
   // ---------------------------------------------------------------------
   // 試行を1セット作成してキューイング
   function addExamBlockToTimeline(ExamNumber) { 
+    var ExamIndex = [
+      "",
+      "問題１",
+      "問題２",
+      "問題３",
+      "問題４",
+      "問題５",
+      "問題６",
+      "問題７",
+      "問題８"
+    ];
+
     Trials.timeline.push(TrialPage1);            // これから2分間、文章を読んでいただきます。
     Trials.timeline.push(Exam[ExamNumber]);      // 問題呈示部分をキューイング
     Trials.timeline.push(TrialPage2);            // これから5問に答えてください
     ExamAnswer[ExamNumber] = [];                 // 縦書き質問群の配列を初期化
-    MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;             // 縦書き質問群を作成
-    for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); } // 縦書き質問群をキューイング
+    Trials.timeline.push(MakeQuestion5(ExamIndex[ExamNumber], ExamText[ExamNumber]) );
     Trials.timeline.push(TrialPage3,QofFont);    // フォントの感想をキューイング
   } ;
   // ---------------------------------------------------------------------
