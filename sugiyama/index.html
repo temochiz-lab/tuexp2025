@@ -294,9 +294,9 @@
       ・わからない言葉や内容があっても、まずはご自身の理解で読み進めてください。 <br>\
       <br><br><br>\
       まず初めに操作方法の確認のための練習問題を行います。 <br>\
-      準備が出来たら、「開始する」を押してください。 <br>\
+      準備が出来たら、「開始」を押してください。 <br>\
       <br><br></font></div>',
-      choices: ['次へ'],
+      choices: ['開始'],
     };
 
     // 実験の終了
@@ -350,7 +350,7 @@
       準備が出来たら「開始」ボタンを押してください。 <br>\
       開始と同時にタイマーがスタートされます。 <br>\
       <br><br></font></div>',
-      choices: ['開始する'],
+      choices: ['開始'],
     };
   // ---------------------------------------------------------------------
   var TrialPage1 = {
@@ -366,7 +366,7 @@
       <br>\
       準備が出来たら「開始」ボタンを押してください。<br>\
       <br><br></font></div>',
-      choices: ['開始する'],
+      choices: ['開始'],
     };
   // ---------------------------------------------------------------------
 //    var PracticeExam1Text = '<div align="left" style="width:90%;margin:auto;">\
@@ -461,7 +461,7 @@
       <br>\
       ＊各問題は「次へ」を押すと戻れませんのでご注意ください。<br>\
       <br><br></font></div>',
-      choices: ['開始する'],
+      choices: ['開始'],
     };
   // ---------------------------------------------------------------------
   var TrialPage3 = {
@@ -478,10 +478,10 @@
       <br>\
       準備が出来たら「開始」ボタンを押してください。<br>\
       <br><br></font></div>',
-      choices: ['開始する'],
+      choices: ['開始'],
     };
   // ---------------------------------------------------------------------
-  var PracticePage2 = {
+  var PracticePagelast = {
       type: jsPsychHtmlButtonResponse,
       margin_vertical: '100px',
       margin_horizontal: '100px',
@@ -494,6 +494,28 @@
       <br><br></font></div>',
       choices: ['次へ'],
     };
+  // ---------------------------------------------------------------------
+  var TrialPagelast = {
+      type: jsPsychHtmlKeyboardResponse,
+      stimulus: '<div align="left"><font> \
+      <br><br><br>\
+      実験は以上です。ご協力ありがとうございました。<br>\
+      本実験の真の目的についてご説明いたします。<br>\
+      <br>\
+      本研究は、デジタル環境におけるフォントの種類（セリフ体とサンセリフ体）が、読解力(速度・正答率)・主観的な読みやすさや印象の評価にどのような影響を及ぼすかを検討することを目的としていました。<br>\
+      <br>\
+      この目的を事前に明かしてしまうと、「フォントを意識して読む」といった行動が誘発され、自然な読解行動に偏りが生じるおそれがあるため、フォントに関する情報はあえて事前にお伝えしておりませんでした。<br>\
+      <br>\
+      実験中に提示された文章は、内容を統一した上で、異なるフォントで提示されており、その違いが理解や主観的評価に与える影響を測定しています。<br>\
+      <br>\
+      皆さまのご協力により、フォントの視認性や可読性が学習や情報処理に与える影響について、今後さらに深く理解を進めることができると考えております。<br>\
+      <br>\
+      本研究は卒業研究の目的に限って使用され、それ以外の目的に使用されることはありません。<br>\
+      <br>\
+      本日はご協力いただき、誠にありがとうございました。<br>\
+      <br><br></font></div>',
+    };
+
   // ---------------------------------------------------------------------
     // 縦表示の質問群を作成
     const PracticeAnswer = []; // ここに出来上がる
@@ -530,7 +552,7 @@
     // タイムラインに追加
     PracticeTrials.timeline.push(PracticePage1, PracticeExam1, TrialPage2);
     for (let i = 0; i < PracticeAnswer.length; i++) { PracticeTrials.timeline.push(PracticeAnswer[i]); }
-    PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePage2);
+    PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePagelast);
 
     // ---------------------------------------------------------------------
     // 本番試行
@@ -936,11 +958,13 @@
   // ---------------------------------------------------------------------
   // 試行を1セット作成してキューイング
   function addExamBlockToTimeline(ExamNumber) { 
-    Trials.timeline.push(Exam[ExamNumber]); // 問題呈示部分をキューイング
-    ExamAnswer[ExamNumber] = [];            // 縦書き質問群の配列を初期化
+    Trials.timeline.push(TrialPage1);            // これから2分間、文章を読んでいただきます。
+    Trials.timeline.push(Exam[ExamNumber]);      // 問題呈示部分をキューイング
+    Trials.timeline.push(TrialPage2);            // これから5問に答えてください
+    ExamAnswer[ExamNumber] = [];                 // 縦書き質問群の配列を初期化
     MakeVerticalQuestions(ExamAnswer[ExamNumber], ExamQuestions[ExamNumber], ExamText[ExamNumber]) ;             // 縦書き質問群を作成
     for (let i = 0; i < ExamAnswer[ExamNumber].length; i++) { Trials.timeline.push(ExamAnswer[ExamNumber][i]); } // 縦書き質問群をキューイング
-    Trials.timeline.push(QofFont);          // フォントの感想をキューイング
+    Trials.timeline.push(TrialPage3,QofFont);    // フォントの感想をキューイング
   } ;
   // ---------------------------------------------------------------------
   // 本番試行 引数?patternで指定したグループの出し分け
@@ -948,35 +972,42 @@
   // case '2': // グループ2 = 7→8→1→2
   // case '3': // グループ3 = 3→4→5→6
   // case '4': // グループ4 = 5→6→3→4
+/*
+  // タイムラインに追加
+      PracticeTrials.timeline.push(PracticePage1, PracticeExam1, TrialPage2);
+    for (let i = 0; i < PracticeAnswer.length; i++) { PracticeTrials.timeline.push(PracticeAnswer[i]); }
+    PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePagelast);
+*/
+  Trials.timeline.push(TrialPage1); // 練習は終了です。　これから本実験を開始します。
   // ---------------------------------------------------------------------
   switch (pattern) {
       // -----------------------------------------------------------------
       case '1': // グループ1 = 1→2→7→8
       default:
-        addExamBlockToTimeline(1) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(1) ; 
         addExamBlockToTimeline(2) ; Trials.timeline.push(resttime);
-        addExamBlockToTimeline(7) ; Trials.timeline.push(resttime); 
+        addExamBlockToTimeline(7) ; 
         addExamBlockToTimeline(8) ; 
         break;
       // -----------------------------------------------------------------
       case '2': // グループ2 = 7→8→1→2
-        addExamBlockToTimeline(7) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(7) ; 
         addExamBlockToTimeline(8) ; Trials.timeline.push(resttime);
-        addExamBlockToTimeline(1) ; Trials.timeline.push(resttime); 
+        addExamBlockToTimeline(1) ; 
         addExamBlockToTimeline(2) ; 
       break;
       // -----------------------------------------------------------------
       case '3': // グループ3 = 3→4→5→6
-        addExamBlockToTimeline(3) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(3) ; 
         addExamBlockToTimeline(4) ; Trials.timeline.push(resttime);
-        addExamBlockToTimeline(5) ; Trials.timeline.push(resttime); 
+        addExamBlockToTimeline(5) ; 
         addExamBlockToTimeline(6) ; 
         break;
       // -----------------------------------------------------------------
       case '4': // グループ4 = 5→6→3→4
-        addExamBlockToTimeline(5) ; Trials.timeline.push(resttime);
+        addExamBlockToTimeline(5) ; 
         addExamBlockToTimeline(6) ; Trials.timeline.push(resttime);
-        addExamBlockToTimeline(3) ; Trials.timeline.push(resttime); 
+        addExamBlockToTimeline(3) ; 
         addExamBlockToTimeline(4) ; 
         break;
       case '0': // デバッグ用に全部
@@ -989,8 +1020,7 @@
     // 実験の開始
     // ------------------------------------------------------------------------
 
-    jsPsych.run([enter_fullscreen,Page1, Page2, Page3,PracticeTrials, Trials, exit_fullscreen,bye]);
-//    jsPsych.run([enter_fullscreen,Page1, Page2, Page3, PracticeTrials, Trials, exit_fullscreen,bye]);
+    jsPsych.run([enter_fullscreen,Page1, Page2, Page3,PracticeTrials, Trials, TrialPagelast, exit_fullscreen]);
     // ========================================================
     // プログラム本体の終わり
     // ========================================================
