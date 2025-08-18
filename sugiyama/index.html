@@ -79,7 +79,7 @@
   var expname  = "sugiyama2025-0812-002-"             // 実験名
     var filename = expname + yyyymmddhhmise() + ".csv"; // 保存時のファイル名
     var stimulusDuration  = 120000 ;                    // 問題表示時間  2分(msec) 2 x 60 x 1000 = 120000
-    var responseTimeLimit = 60000 ;                     // 回答制限時間  1分(msec) 1 x 60 x 1000 = 60000
+    var responseTimeLimit = 480000 ;                     // 回答制限時間  8分(msec) 1 x 60 x 1000 = 480000
     var resttime_msec     = 180000 ;                    // 休憩時間      3分(msec) 3 x 60 x 1000 = 180000
 
     // ここから開始
@@ -204,7 +204,7 @@
           const timer = setTimeout(() => {
             const btn = document.querySelector('#jspsych-survey-multi-choice-next');
             if (btn) btn.click();
-          }, typeof responseTimeLimit !== "undefined" ? responseTimeLimit : 60000); // デフォルト値も設定
+          }, typeof responseTimeLimit !== "undefined" ? responseTimeLimit : 3000); // デフォルト値も設定
 
           // --- 手動クリック時にタイマー解除 ---
           const nextBtn = document.querySelector('#jspsych-survey-multi-choice-next');
@@ -517,18 +517,78 @@
     };
 
   // ---------------------------------------------------------------------
-    // 縦表示の質問群を作成
-    const PracticeAnswer = []; // ここに出来上がる
-    MakeVerticalQuestions(PracticeAnswer, practiceQuestions, PracticeExam1Text) ;
+  // 縦表示の質問群を作成
+  //const PracticeAnswer = []; // ここに出来上がる
+  //MakeVerticalQuestions(PracticeAnswer, practiceQuestions, PracticeExam1Text) ;
   // ---------------------------------------------------------------------
+ 
+ // 文章を読んでの設問1-5を作成。　ここだけ質問紙を使うので、ラベルをつけてわかるように表示する
+  function MakeQuestion5(argLabel, argPopupText) {
+  var Question5_scale = ["１", "２", "３", "４", "５"];
+  var Question5 = {
+    type: jsPsychSurveyLikert,
+    button_label: "次へ",
+    scale_width: 700,
+    preamble: argLabel + `<br><br>
+      <button id="show-problem" type="button">問題文を表示</button>
+      <div id="problem-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9998;"></div>
+      <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:min(100vw, 1100px); max-height:80vh; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25); padding:20px; z-index:9999;">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
+          <button id="close-problem" type="button">閉じる</button>
+        </div>
+        <div id="problem-content">${typeof argPopupText !== "undefined" ? argPopupText : ""}</div>
+      </div>
+    `,
+    questions: [
+      { prompt: "問題１", name: 'Q01', labels: Question5_scale, required: false },
+      { prompt: "問題２", name: 'Q02', labels: Question5_scale, required: false },
+      { prompt: "問題３", name: 'Q03', labels: Question5_scale, required: false },
+      { prompt: "問題４", name: 'Q04', labels: Question5_scale, required: false },
+      { prompt: "問題５", name: 'Q11', labels: Question5_scale, required: false }
+    ],
+    on_load: function () {
+      // モーダル開閉
+      const showBtn = document.getElementById('show-problem');
+      const overlay = document.getElementById('problem-overlay');
+      const modal = document.getElementById('problem-modal');
+      const closeBtn = document.getElementById('close-problem');
+
+      const open = () => {
+        overlay.style.display = 'block';
+        modal.style.display = 'block';
+      };
+      const close = () => {
+        overlay.style.display = 'none';
+        modal.style.display = 'none';
+      };
+
+      showBtn.addEventListener('click', open);
+      closeBtn.addEventListener('click', close);
+      overlay.addEventListener('click', close);
+      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+      // タイムアウトで強制的に trial を終了
+      setTimeout(() => {
+        jsPsych.finishTrial(); // ← 自動送りの本質はここ
+      }, responseTimeLimit);
+    }
+  };
+  return Question5;
+}
+
+
+  // ---------------------------------------------------------------------
+  // フォントの感想
+  // 選択肢
     var QofFont_scale = [
-      "全くそう思わない",
-      "そう思わない",
-      "どちらでもない",
-      "そう思う",
-      "非常にそう思う"
-    ];
+        "全くそう思わない",
+        "そう思わない",
+        "どちらでもない",
+        "そう思う",
+        "非常にそう思う"
+      ];
     mustflag = true ;if (testmode ==1) mustflag = false; 
+    // 問題本体
     var QofFont = {
       type: jsPsychSurveyLikert,
       button_label: "次へ",
@@ -551,7 +611,8 @@
 
     // タイムラインに追加
     PracticeTrials.timeline.push(PracticePage1, PracticeExam1, TrialPage2);
-    for (let i = 0; i < PracticeAnswer.length; i++) { PracticeTrials.timeline.push(PracticeAnswer[i]); }
+    PracticeTrials.timeline.push(MakeQuestion5("練習問題",PracticeExam1Text) );
+    //for (let i = 0; i < PracticeAnswer.length; i++) { PracticeTrials.timeline.push(PracticeAnswer[i]); }
     PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePagelast);
 
     // ---------------------------------------------------------------------
