@@ -22,12 +22,12 @@
     // ========================================================
     // 起動時パラメータの設定
     // ========================================================
-    var expsubject ; // 使いまわすグローバル変数
+    var expsubject;                                   // 使いまわすグローバル変数
     const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    const pattern = urlParams.get('pattern');
-    var testmode ;
-    testmode = 1 ; // ************************** 開発時のみ・後でコメント **************************
+    const urlParams   = new URLSearchParams(queryString);
+    var   pattern     = urlParams.get('pattern');
+    var   testmode;
+    testmode = 1;                                     // ************************** 開発時のみ・後でコメント **************************
     if (urlParams.has('test')) {
       testmode = urlParams.get('test');
     }
@@ -49,38 +49,38 @@
         break;
       default:
         expsubject = "<font color=red>出題パターン 1</font>";
-        pattern = 1 ;
+        pattern    = 1;
         break;
     }
   </script>
   <script>
-  // ======================================================
-  // プログラム本体
-  // ======================================================
+    // ======================================================
+    // プログラム本体
+    // ======================================================
     // 保存用のファイル名を生成
     function yyyymmddhhmise() {
-      // 日付時間秒を文字列で返す	
-      const dt = new Date();
-      var yyyy = dt.getFullYear();
-      var mm = ('00' + (dt.getMonth() + 1)).slice(-2);
-      var dd = ('00' + dt.getDate()).slice(-2);
-      var hh = ('00' + dt.getHours()).slice(-2);
-      var mi = ('00' + dt.getMinutes()).slice(-2);
-      var se = ('00' + dt.getSeconds()).slice(-2);
+      // 日付時間秒を文字列で返す
+      const dt   = new Date();
+      var yyyy   = dt.getFullYear();
+      var mm     = ('00' + (dt.getMonth() + 1)).slice(-2);
+      var dd     = ('00' + dt.getDate()).slice(-2);
+      var hh     = ('00' + dt.getHours()).slice(-2);
+      var mi     = ('00' + dt.getMinutes()).slice(-2);
+      var se     = ('00' + dt.getSeconds()).slice(-2);
 
       var answer = yyyy + mm + dd + "-" + hh + mm + se;
       return (answer);
     }
 
-  // ======================================================
+    // ======================================================
     // 説明文やお約束のパーツ
     // グローバル変数
-  // ======================================================
-  var expname  = "sugiyama2025-0812-002-"             // 実験名
-    var filename = expname + yyyymmddhhmise() + ".csv"; // 保存時のファイル名
-    var stimulusDuration  = 120000 ;                    // 問題表示時間  2分(msec) 2 x 60 x 1000 = 120000
-    var responseTimeLimit = 480000 ;                     // 回答制限時間  8分(msec) 1 x 60 x 1000 = 480000
-    var resttime_msec     = 180000 ;                    // 休憩時間      3分(msec) 3 x 60 x 1000 = 180000
+    // ======================================================
+    var expname           = "sugiyama2025-0812-002-";             // 実験名
+    var filename          = expname + yyyymmddhhmise() + ".csv";  // 保存時のファイル名
+    var stimulusDuration  = 120000;                               // 問題表示時間  2分(msec) 2 x 60 x 1000 = 120000
+    var responseTimeLimit = 480000;                               // 回答制限時間  8分(msec) 1 x 60 x 1000 = 480000
+    var resttime_msec     = 180000;                               // 休憩時間      3分(msec) 3 x 60 x 1000 = 180000
 
     // ここから開始
     var jsPsych = initJsPsych({
@@ -91,139 +91,29 @@
     });
 
     // テストモード用パラメーター
-    var testmodeText = '' ;
-//    testmode = 1 ; // ************************** 開発時のみ・後でコメント **************************
-    if (testmode == '1' ) {
-      testmodeText = " <font color = 'blue'>テストモード</font>" ;
-      stimulusDuration  = 10000 ;                      // 問題表示時間10秒
-      responseTimeLimit = 10000 ;                      // 回答制限時間10秒
-      resttime_msec     = 10000 ;                      // 休憩時間10秒
+    var testmodeText = '';
+    // testmode = 1 ; // ************************** 開発時のみ・後でコメント **************************
+    if (testmode == '1') {
+      testmodeText       = " <font color = 'blue'>テストモード</font>";
+      stimulusDuration   = 10000;                                 // 問題表示時間10秒
+      responseTimeLimit  = 10000;                                 // 回答制限時間10秒
+      resttime_msec      = 10000;                                 // 休憩時間10秒
     }
 
     // フルスクリーン開始
     var enter_fullscreen = {
-      type: jsPsychFullscreen,
-      message: '<p>実験名: ' + expname + expsubject + testmodeText +'</p><p>開始ボタンを押すと全画面表示で実験が始まります。</p>',
-      button_label: "開始",
+      type           : jsPsychFullscreen,
+      message        : '<p>実験名: ' + expname + expsubject + testmodeText +'</p><p>開始ボタンを押すと全画面表示で実験が始まります。</p>',
+      button_label   : "開始",
       fullscreen_mode: true
     }
 
-  // ======================================================
-  // 縦表示の質問群を作成する
-  // テスト(スキップ操作)時にタイマーイベントをクリアしないので、
-  // (1) 本文表示、質問① のスキップ、(2)短い時間でスキップが発生する。
-  // ======================================================
-  function MakeVerticalQuestions(Answer, Questions, PopupText) {
-    mustflag = true ;if (testmode ==1) mustflag = false; 
-    for (let i = 0; i < Questions.length; i++) {
-      Answer.push({
-        type: jsPsychSurveyMultiChoice,
-        button_label: '次へ',
-        // ▼「問題文を表示」ボタン＋モーダル本体を preamble に直埋め込み
-        preamble: `
-          <button id="show-problem" type="button">問題文を表示</button>
-
-          <!-- ポップアップ(オーバーレイ) -->
-          <div id="problem-overlay" style="
-            display:none; position:fixed; inset:0;
-            background:rgba(0,0,0,0.4); z-index:9998;"></div>
-
-          <!-- モーダル 横幅が足りないときは width で変更-->
-          <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="
-            display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%);
-            width:min(100vw, 1100px); max-height:80vh; overflow:auto;
-            background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25);
-            padding:20px; z-index:9999;">
-            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
-              <button id="close-problem" type="button">閉じる</button>
-            </div>
-            <div id="problem-content">
-              ${typeof PopupText !== "undefined" ? PopupText : ""}
-            </div>
-          </div>
-        `,
-        questions: [
-          {
-            prompt: Questions[i].prompt,
-            options: Questions[i].options,
-            required: mustflag,
-            horizontal: false // 横並びにしない（縦書き表示の基礎）
-          }
-        ],
-        on_load: () => {
-          // --- 縦書きレイアウトの適用 ---
-          const style = document.createElement('style');
-          style.textContent = `
-            /* 全体を横並びにする */
-            .jspsych-survey-multi-choice {
-              display: flex;
-              flex-direction: row;
-              gap: 2em;
-            }
-            /* 質問文を縦書きに */
-            .jspsych-survey-multi-choice-question {
-              writing-mode: vertical-rl;
-              text-orientation: upright;
-            }
-            /* 選択肢部分も縦書きに */
-            .jspsych-survey-multi-choice-option label {
-              writing-mode: vertical-rl;
-              text-orientation: upright;
-            }
-            /* ボタンをセンタリング */
-            #jspsych-survey-multi-choice-next {
-              display: block;
-              margin: 2em auto;
-            }
-          `;
-          document.head.appendChild(style);
-
-          // --- モーダルの開閉 ---
-          const showBtn = document.getElementById('show-problem');
-          const overlay = document.getElementById('problem-overlay');
-          const modal = document.getElementById('problem-modal');
-          const closeBtn = document.getElementById('close-problem');
-
-          const open = () => {
-            if (overlay) overlay.style.display = 'block';
-            if (modal) modal.style.display = 'block';
-            if (overlay) overlay.setAttribute('aria-hidden', 'false');
-          };
-          const close = () => {
-            if (overlay) overlay.style.display = 'none';
-            if (modal) modal.style.display = 'none';
-            if (overlay) overlay.setAttribute('aria-hidden', 'true');
-          };
-
-          if (showBtn) showBtn.addEventListener('click', open);
-          if (closeBtn) closeBtn.addEventListener('click', close);
-          if (overlay) overlay.addEventListener('click', close);
-          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-
-          // --- 回答時間切れの処理 ---
-          const timer = setTimeout(() => {
-            const btn = document.querySelector('#jspsych-survey-multi-choice-next');
-            if (btn) btn.click();
-          }, typeof responseTimeLimit !== "undefined" ? responseTimeLimit : 3000); // デフォルト値も設定
-
-          // --- 手動クリック時にタイマー解除 ---
-          const nextBtn = document.querySelector('#jspsych-survey-multi-choice-next');
-          if (nextBtn) nextBtn.addEventListener('click', () => clearTimeout(timer), { once: true });
-        }
-      });
-    }
-  }
-  
-  // ======================================================
-  // ここまで
-  // ======================================================
-
     // 実験の説明
     var Page1 = {
-      type: jsPsychHtmlButtonResponse,
-      margin_vertical: '100px',
+      type             : jsPsychHtmlButtonResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: '<div align="left" style="width:80%;margin:auto;"><font> \
+      stimulus         : '<div align="left" style="width:80%;margin:auto;"><font> \
       <br><br><br>\
       私は、常磐大学人間科学部心理学科4年の杉山真尋です。 <br>\
       本研究の目的は、文章を読む際の体験や印象がどのように形成されるのかを検討することにあります。日常的な読解場面における反応や感じ方の傾向を把握するために、パソコン画面上で文章を読んでいただく課題を通して実験を行います。 <br>\
@@ -234,7 +124,7 @@
       <br><br>\
       上記の趣旨をご理解いただいたうえで、どうぞ自然な形で課題にご参加ください。皆さまのご協力に深く感謝申し上げます。 <br>\
       <br></font></div>',
-      choices: ['次へ'],
+      choices          : ['次へ'],
       on_load: function () { // 以降、ctrl + q でスキップする
         // すでに登録済みなら二重登録しない
         if (!window.__globalCtrlQHandler) {
@@ -269,21 +159,21 @@
     };
 
     // Facesheet / 被検者情報の入力 完成時には入力必須にしておく
-    mustflag = true ;if (testmode ==1) mustflag = false; 
+    mustflag = true; if (testmode == 1) mustflag = false;
     var Page2 = {
-      type: jsPsychSurveyText,
+      type     : jsPsychSurveyText,
       questions: [
         { prompt: '学籍番号と年齢を入力してください。<br><br><br>あなたの学籍番号を入力してください。', columns: 5, required: mustflag, name: 'id' },
         { prompt: 'あなたの年齢を入力してください。', columns: 5, required: mustflag, name: 'age' },
       ],
       button_label: '次へ',
-  };
+    };
 
     var Page3 = {
-      type: jsPsychHtmlButtonResponse,
-      margin_vertical: '100px',
+      type             : jsPsychHtmlButtonResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: '<div align="left"><font> \
+      stimulus         : '<div align="left"><font> \
       <br><br><br>\
       この実験では、文章を読んで、その内容に関する質問に答えていただきます。 <br>\
       文章の表示時間や回答内容は、研究目的のために記録されます。 <br>\
@@ -296,49 +186,49 @@
       まず初めに操作方法の確認のための練習問題を行います。 <br>\
       準備が出来たら、「開始」を押してください。 <br>\
       <br><br></font></div>',
-      choices: ['開始'],
+      choices          : ['開始'],
     };
 
     // 実験の終了
     var bye = {
-      type: jsPsychHtmlKeyboardResponse,
+      type    : jsPsychHtmlKeyboardResponse,
       stimulus: 'これで実験は終了です。 PCには触れずに実験者の指示に従ってください。',
     };
 
     // フルスクリーン終了
     var exit_fullscreen = {
-      type: jsPsychFullscreen,
+      type           : jsPsychFullscreen,
       fullscreen_mode: false,
-      delay_after: 0
+      delay_after    : 0
     }
 
     // プリロード
     var preload = {
-      type: jsPsychPreload,
+      type        : jsPsychPreload,
       auto_preload: true
     }
 
     // 休憩(本番時には3分に)
     var resttime = {
-      type: jsPsychHtmlKeyboardResponse,
-      stimulus: "3分間休憩します",
-      choices: 'q',
+      type             : jsPsychHtmlKeyboardResponse,
+      stimulus         : "3分間休憩します",
+      choices          : 'q',
       stimulus_duration: resttime_msec, // 前の方でグローバル変数で定義
-      trial_duration: resttime_msec,
+      trial_duration   : resttime_msec,
     };
 
-  // ======================================================
-  // 練習試行
-  // ======================================================
+    // ======================================================
+    // 練習試行
+    // ======================================================
     var PracticeTrials = {
       timeline: [],
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     var PracticePage1 = {
-      type: jsPsychHtmlButtonResponse,
-      margin_vertical: '100px',
+      type             : jsPsychHtmlButtonResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: '<div align="left"><font> \
+      stimulus         : '<div align="left"><font> \
       <br><br><br>\
       これから練習を開始いたします。 <br>\
       <br><br><br>\
@@ -350,14 +240,14 @@
       準備が出来たら「開始」ボタンを押してください。 <br>\
       開始と同時にタイマーがスタートされます。 <br>\
       <br><br></font></div>',
-      choices: ['開始'],
+      choices          : ['開始'],
     };
-  // ---------------------------------------------------------------------
-  var TrialPage1 = {
-      type: jsPsychHtmlButtonResponse,
-      margin_vertical: '100px',
+    // ---------------------------------------------------------------------
+    var TrialPage1 = {
+      type             : jsPsychHtmlButtonResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: '<div align="left"><font> \
+      stimulus         : '<div align="left"><font> \
       <br><br><br>\
       初めに２分間、文章を読んでいただきます。<br>２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
       <br>\
@@ -366,10 +256,10 @@
       <br>\
       準備が出来たら「開始」ボタンを押してください。<br>\
       <br><br></font></div>',
-      choices: ['開始'],
+      choices          : ['開始'],
     };
-  // ---------------------------------------------------------------------
-//    var PracticeExam1Text = '<div align="left" style="width:90%;margin:auto;">\
+    // ---------------------------------------------------------------------
+    //    var PracticeExam1Text = '<div align="left" style="width:90%;margin:auto;">\
     var PracticeExam1Text = '<div align="left"">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
     練習問題<br> \
@@ -377,79 +267,79 @@
     　食後、私たちは近くの古本屋に立ち寄った。棚には古びた装丁の小説や、昭和時代の雑誌が整然と並んでいる。佐藤は旅行記を手に取り、ページをめくる手が止まらない様子だった。私は表紙に引かれて、あるエッセイ集を手に取った。読み進めると、著者が旅先で出会った人々の温かさが静かに綴られていた。その文章に心を動かされ、私は思わず購入を決めた。<br> \
     　その後、私たちは商店街をさらに歩き、小さな花屋に立ち寄った。色とりどりの花が並び、春の訪れを感じさせる。佐藤が一輪の黄色いチューリップを選び、私も青いデルフィニウムに目を奪われた。花を手に持ちながら、私たちは次に喫茶店へ向かった。窓際の席に座り、外の景色を眺めながら、ゆっくりとコーヒーを飲んだ。何気ない会話の中に、心地よい時間が流れていくのを感じた。気づけば夕方、商店街はオレンジ色の光に包まれていた。帰り道、佐藤が「また来よう」と言い、私も深くうなずいた。こうした小さな一日は、後から振り返ると宝物のように輝くのだと思った。<br> \
     </div></div>';
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     var PracticeExam1 = {
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: PracticeExam1Text,
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前の方でグローバル変数で定義
+      stimulus         : PracticeExam1Text,
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前の方でグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
-    var f1 = '<span style="font-family: MS Mincho;">' ; // 設問のフォントも指定だったらここ
-    var f2 = '<span style="font-family: MS Gothic;">' ; // 設問のフォントも指定だったらここ
-    var fend = '</span>' ;                              //
+    var f1   = '<span style="font-family: MS Mincho;">'; // 設問のフォントも指定だったらここ
+    var f2   = '<span style="font-family: MS Gothic;">'; // 設問のフォントも指定だったらここ
+    var fend = '</span>';                                //
     const practiceQuestions = [
       {
-        prompt: '問１　商店街で最初に訪れた店はどこか？' ,
+        prompt : '問１　商店街で最初に訪れた店はどこか？',
         options: [
-          '　古本屋', 
-          '　パン屋', 
-          '　雑貨屋', 
-          '　カフェ', 
+          '　古本屋',
+          '　パン屋',
+          '　雑貨屋',
+          '　カフェ',
           '　八百屋'
         ]
       },
       {
-        prompt: '問２　佐藤が選んだパンはどれか？' ,
+        prompt : '問２　佐藤が選んだパンはどれか？',
         options: [
-          '　クロワッサン', 
-          '　チョコレート入りパン', 
-          '　ハムとチーズのサンド', 
-          '　バゲット', 
+          '　クロワッサン',
+          '　チョコレート入りパン',
+          '　ハムとチーズのサンド',
+          '　バゲット',
           '　メロンパン'
         ]
       },
       {
-        prompt: '問３　私が購入した本のジャンルはどれか？',
+        prompt : '問３　私が購入した本のジャンルはどれか？',
         options: [
-          '　旅行記', 
-          '　エッセイ集', 
-          '　小説', 
-          '　雑誌', 
+          '　旅行記',
+          '　エッセイ集',
+          '　小説',
+          '　雑誌',
           '　料理本'
         ]
       },
       {
-        prompt: '問４　本文で「オレンジ色の光」と表現されているのは何の時間帯か？',
+        prompt : '問４　本文で「オレンジ色の光」と表現されているのは何の時間帯か？',
         options: [
-          '　朝', 
-          '　正午', 
-          '　午後3時', 
-          '　夕方', 
+          '　朝',
+          '　正午',
+          '　午後3時',
+          '　夕方',
           '　夜'
         ]
       },
       {
-        prompt: '問５　最後に筆者が述べていることとして最も適切なのはどれか？',
+        prompt : '問５　最後に筆者が述べていることとして最も適切なのはどれか？',
         options: [
-          '　大きな出来事こそが人生を輝かせる', 
-          '　日常の小さな時間も価値がある', 
-          '　商店街は都会よりも魅力的だ', 
-          '　佐藤との友情は特別だ', 
+          '　大きな出来事こそが人生を輝かせる',
+          '　日常の小さな時間も価値がある',
+          '　商店街は都会よりも魅力的だ',
+          '　佐藤との友情は特別だ',
           '　旅先での経験は忘れられない'
         ]
       }
     ];
 
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     var TrialPage2 = {
-      type: jsPsychHtmlButtonResponse,
-      margin_vertical: '100px',
+      type             : jsPsychHtmlButtonResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: '<div align="left""><font> \
+      stimulus         : '<div align="left""><font> \
       <br><br><br>\
       次に、先ほど読んだ文章に関する５つの問題（5択式）に答えていただきます。 <br>\
       <br>\
@@ -461,14 +351,14 @@
       <br>\
       ＊各問題は「次へ」を押すと戻れませんのでご注意ください。<br>\
       <br><br></font></div>',
-      choices: ['開始'],
+      choices          : ['開始'],
     };
-  // ---------------------------------------------------------------------
-  var TrialPage3 = {
-      type: jsPsychHtmlButtonResponse,
-      margin_vertical: '100px',
+    // ---------------------------------------------------------------------
+    var TrialPage3 = {
+      type             : jsPsychHtmlButtonResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: '<div align="left"><font> \
+      stimulus         : '<div align="left"><font> \
       <br><br><br>\
       次に、先ほど読んだ文章についての印象について答えていただきます。<br>\
       <br>\
@@ -478,25 +368,25 @@
       <br>\
       準備が出来たら「開始」ボタンを押してください。<br>\
       <br><br></font></div>',
-      choices: ['開始'],
+      choices          : ['開始'],
     };
-  // ---------------------------------------------------------------------
-  var PracticePagelast = {
-      type: jsPsychHtmlButtonResponse,
-      margin_vertical: '100px',
+    // ---------------------------------------------------------------------
+    var PracticePagelast = {
+      type             : jsPsychHtmlButtonResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: '<div align="left"><font> \
+      stimulus         : '<div align="left"><font> \
       <br><br><br>\
       練習は終了です。<br>\
       これから本実験を開始します。<br>\
       <br>\
       「次へ」を押して進んでください。<br>\
       <br><br></font></div>',
-      choices: ['次へ'],
+      choices          : ['次へ'],
     };
-  // ---------------------------------------------------------------------
-  var TrialPagelast = {
-      type: jsPsychHtmlKeyboardResponse,
+    // ---------------------------------------------------------------------
+    var TrialPagelast = {
+      type    : jsPsychHtmlKeyboardResponse,
       stimulus: '<div align="left"><font> \
       <br><br><br>\
       実験は以上です。ご協力ありがとうございました。<br>\
@@ -516,99 +406,98 @@
       <br><br></font></div>',
     };
 
-  // ---------------------------------------------------------------------
-  // 縦表示の質問群を作成
-  //const PracticeAnswer = []; // ここに出来上がる
-  //MakeVerticalQuestions(PracticeAnswer, practiceQuestions, PracticeExam1Text) ;
-  // ---------------------------------------------------------------------
- 
- // 文章を読んでの設問1-5を作成。　ここだけ質問紙を使うので、ラベルをつけてわかるように表示する
- function MakeQuestion5(argLabel, argPopupText) {
-  const Question5_scale = ["１", "２", "３", "４", "５"];
+    // ---------------------------------------------------------------------
+    // 縦表示の質問群を作成
+    //const PracticeAnswer = []; // ここに出来上がる
+    //MakeVerticalQuestions(PracticeAnswer, practiceQuestions, PracticeExam1Text) ;
+    // ---------------------------------------------------------------------
 
-  const Question5 = {
-    type: jsPsychSurveyLikert,
-    button_label: "次へ",
-    scale_width: 700,
-    preamble: argLabel + `<br><br>
-      <button id="show-problem" type="button">問題文を表示</button>
-      <div id="problem-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9998;"></div>
-      <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:min(100vw, 1150px); max-height:80vh; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25); padding:20px; z-index:9999;">
-        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
-          <button id="close-problem" type="button">閉じる</button>
-        </div>
-        <div id="problem-content">${typeof argPopupText !== "undefined" ? argPopupText : ""}</div>
-      </div>
-    `,
-    questions: [
-      { prompt: "問題１", name: 'Q01', labels: Question5_scale, required: false },
-      { prompt: "問題２", name: 'Q02', labels: Question5_scale, required: false },
-      { prompt: "問題３", name: 'Q03', labels: Question5_scale, required: false },
-      { prompt: "問題４", name: 'Q04', labels: Question5_scale, required: false },
-      { prompt: "問題５", name: 'Q11', labels: Question5_scale, required: false }
-    ],
-    on_load: function () {
-      const showBtn = document.getElementById('show-problem');
-      const overlay = document.getElementById('problem-overlay');
-      const modal = document.getElementById('problem-modal');
-      const closeBtn = document.getElementById('close-problem');
+    // 文章を読んでの設問1-5を作成。　ここだけ質問紙を使うので、ラベルをつけてわかるように表示する
+    function MakeQuestion5(argLabel, argPopupText) {
+      const Question5_scale = ["１", "２", "３", "４", "５"];
 
-      const open = () => {
-        overlay.style.display = 'block';
-        modal.style.display = 'block';
+      const Question5 = {
+        type        : jsPsychSurveyLikert,
+        button_label: "次へ",
+        scale_width : 700,
+        preamble    : argLabel + `<br><br>
+          <button id="show-problem" type="button">問題文を表示</button>
+          <div id="problem-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9998;"></div>
+          <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:min(100vw, 1150px); max-height:80vh; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25); padding:20px; z-index:9999;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
+              <button id="close-problem" type="button">閉じる</button>
+            </div>
+            <div id="problem-content">${typeof argPopupText !== "undefined" ? argPopupText : ""}</div>
+          </div>
+        `,
+        questions: [
+          { prompt: "問題１", name: 'Q01', labels: Question5_scale, required: false },
+          { prompt: "問題２", name: 'Q02', labels: Question5_scale, required: false },
+          { prompt: "問題３", name: 'Q03', labels: Question5_scale, required: false },
+          { prompt: "問題４", name: 'Q04', labels: Question5_scale, required: false },
+          { prompt: "問題５", name: 'Q11', labels: Question5_scale, required: false }
+        ],
+        on_load: function () {
+          const showBtn  = document.getElementById('show-problem');
+          const overlay  = document.getElementById('problem-overlay');
+          const modal    = document.getElementById('problem-modal');
+          const closeBtn = document.getElementById('close-problem');
+
+          const open = () => {
+            overlay.style.display = 'block';
+            modal.style.display   = 'block';
+          };
+          const close = () => {
+            overlay.style.display = 'none';
+            modal.style.display   = 'none';
+          };
+
+          showBtn.addEventListener('click', open);
+          closeBtn.addEventListener('click', close);
+          overlay.addEventListener('click', close);
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+
+          // --- タイマー開始＆IDを trial に保存 ---
+          const id = setTimeout(() => {
+            jsPsych.finishTrial();
+          }, responseTimeLimit);
+          jsPsych.getCurrentTrial()._timeoutId = id; // ← ここがポイント！
+
+          // 「次へ」クリックでタイマーをキャンセル
+          const nextBtn = document.querySelector('button[type="submit"]');
+          if (nextBtn) {
+            nextBtn.addEventListener('click', () => clearTimeout(id), { once: true });
+          }
+        },
+        on_finish: function () {
+          // --- 念のため、試行終了時にもタイマーを解除 ---
+          const trial = jsPsych.getCurrentTrial();
+          if (trial._timeoutId) {
+            clearTimeout(trial._timeoutId);
+          }
+        }
       };
-      const close = () => {
-        overlay.style.display = 'none';
-        modal.style.display = 'none';
-      };
 
-      showBtn.addEventListener('click', open);
-      closeBtn.addEventListener('click', close);
-      overlay.addEventListener('click', close);
-      document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
-
-      // --- タイマー開始＆IDを trial に保存 ---
-      const id = setTimeout(() => {
-        jsPsych.finishTrial();
-      }, responseTimeLimit);
-      jsPsych.getCurrentTrial()._timeoutId = id; // ← ここがポイント！
-
-      // 「次へ」クリックでタイマーをキャンセル
-      const nextBtn = document.querySelector('button[type="submit"]');
-      if (nextBtn) {
-        nextBtn.addEventListener('click', () => clearTimeout(id), { once: true });
-      }
-    },
-    on_finish: function () {
-      // --- 念のため、試行終了時にもタイマーを解除 ---
-      const trial = jsPsych.getCurrentTrial();
-      if (trial._timeoutId) {
-        clearTimeout(trial._timeoutId);
-      }
+      return Question5;
     }
-  };
 
-  return Question5;
-}
-
-
-  // ---------------------------------------------------------------------
-  // フォントの感想
-  // 選択肢
+    // ---------------------------------------------------------------------
+    // フォントの感想
+    // 選択肢
     var QofFont_scale = [
-        "全くそう思わない",
-        "そう思わない",
-        "どちらでもない",
-        "そう思う",
-        "非常にそう思う"
-      ];
-    mustflag = true ;if (testmode ==1) mustflag = false; 
+      "全くそう思わない",
+      "そう思わない",
+      "どちらでもない",
+      "そう思う",
+      "非常にそう思う"
+    ];
+    mustflag = true; if (testmode == 1) mustflag = false;
     // 問題本体
     var QofFont = {
-      type: jsPsychSurveyLikert,
+      type        : jsPsychSurveyLikert,
       button_label: "次へ",
-      scale_width: 700,
-      questions: [
+      scale_width : 700,
+      questions   : [
         { prompt: "文字がはっきり読める", name: 'Q01', labels: QofFont_scale , required: mustflag},
         { prompt: "文字がくっきり見える", name: 'Q02', labels: QofFont_scale , required: mustflag},
         { prompt: "文字の太さが適切だと感じた", name: 'Q03', labels: QofFont_scale , required: mustflag},
@@ -622,496 +511,492 @@
         { prompt: "全体を読むのに必要な時間が短く感じた", name: 'Q11', labels: QofFont_scale , required: mustflag},
       ],
     }
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
 
     // タイムラインに追加
     PracticeTrials.timeline.push(PracticePage1, PracticeExam1, TrialPage2);
-    PracticeTrials.timeline.push(MakeQuestion5("練習問題",PracticeExam1Text) );
+    PracticeTrials.timeline.push(MakeQuestion5("練習問題", PracticeExam1Text));
     //for (let i = 0; i < PracticeAnswer.length; i++) { PracticeTrials.timeline.push(PracticeAnswer[i]); }
     PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePagelast);
 
     // ---------------------------------------------------------------------
     // 本番試行
     // ------------------------------------------------------------------------------
-    
     // 本番試行の問題格納用
-    var Trials = {
-      timeline: [],
-    };
-    var ExamRaw = [] ;       // 問題文(テキストだけ)
-    var ExamText = [];       // 問題文(最初の表示とポップアップ用のテキスト、CSS込み)
-    var Exam = [] ;          // 最初の表示オブジェクト
-    var ExamQuestions = [] ; // 縦書き質問群
-    var ExamAnswer = [];     // 縦書き質問オブジェクト群（2次元配列）
-    var ExamNumber ;         // 配列の添え字用
+    var Trials        = { timeline: [] };
+    var ExamRaw       = [];      // 問題文(テキストだけ)
+    var ExamText      = [];      // 問題文(最初の表示とポップアップ用のテキスト、CSS込み)
+    var Exam          = [];      // 最初の表示オブジェクト
+    var ExamQuestions = [];      // 縦書き質問群
+    var ExamAnswer    = [];      // 縦書き質問オブジェクト群（2次元配列）
+    var ExamNumber;              // 配列の添え字用
 
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // 問題１
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamNumber = 1 ; // koko
-  ExamRaw[ExamNumber] = ' \
-    　時間とは、我々にとってどれほど確かなものだろうか。時計の針は均等に進むが、経験される時間は常にゆがみ、濃淡をもって流れる。それゆえ時間は、物理的事実であると同時に、意味づけられた現象でもある。つまり、時間は人によって「解釈される」ものであって、単に流れるものではない。<br>\
-    　ある出来事が意味をもつのは、しばしばそれが過去となってからである。経験の真っ只中では、その価値や位置づけは不明瞭だが、後になって文脈の中に配置されることで「意味ある出来事」となる。ここには、意味が時間を遡って形成されるという逆流的構造がある。<br> \
-    　だがこの逆流は、時間の一方向性と矛盾する。過去は変わらないはずだが、意味は後から与えられる以上、我々の現在は絶えず過去を書き換えているとも言える。記憶は事実を保存するのではなく、現在の自己にとっての妥当性に基づいて再構成される。すなわち、時間の流れは直線的であっても、意味の流れは循環的である。<br>\
-    　また未来は、希望や予測として現在に影を落とす。予想される未来は、現在の選択を方向づける。だがこの未来は、まだ訪れていない以上、想像の産物であり、その不確かさゆえに、現在を強く規定する。「今を生きる」という感覚すら、未来の予感を含んだ構造の中で生まれている。<br>\
-    　こうして、過去・現在・未来はいずれも固定されたものではなく、互いに交錯しながら意味を生成する。時間とは流れるものではなく、意味が構成される舞台であり、出来事が生じる順序ではなく、出来事が持ちうる価値をめぐる関係性なのである。すなわち、我々が時間を経験するとは、自己という存在の構成そのものを意味する。<br>\
-  ' ;
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章１<br> ' + ExamRaw[ExamNumber] + '</div></div>';
-  // ---------------------------------------------------------------------
-    Exam[ExamNumber] = { 
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 問題１
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ExamNumber           = 1; // koko
+    ExamRaw[ExamNumber]  = ' \
+      　時間とは、我々にとってどれほど確かなものだろうか。時計の針は均等に進むが、経験される時間は常にゆがみ、濃淡をもって流れる。それゆえ時間は、物理的事実であると同時に、意味づけられた現象でもある。つまり、時間は人によって「解釈される」ものであって、単に流れるものではない。<br>\
+      　ある出来事が意味をもつのは、しばしばそれが過去となってからである。経験の真っ只中では、その価値や位置づけは不明瞭だが、後になって文脈の中に配置されることで「意味ある出来事」となる。ここには、意味が時間を遡って形成されるという逆流的構造がある。<br> \
+      　だがこの逆流は、時間の一方向性と矛盾する。過去は変わらないはずだが、意味は後から与えられる以上、我々の現在は絶えず過去を書き換えているとも言える。記憶は事実を保存するのではなく、現在の自己にとっての妥当性に基づいて再構成される。すなわち、時間の流れは直線的であっても、意味の流れは循環的である。<br>\
+      　また未来は、希望や予測として現在に影を落とす。予想される未来は、現在の選択を方向づける。だがこの未来は、まだ訪れていない以上、想像の産物であり、その不確かさゆえに、現在を強く規定する。「今を生きる」という感覚すら、未来の予感を含んだ構造の中で生まれている。<br>\
+      　こうして、過去・現在・未来はいずれも固定されたものではなく、互いに交錯しながら意味を生成する。時間とは流れるものではなく、意味が構成される舞台であり、出来事が生じる順序ではなく、出来事が持ちうる価値をめぐる関係性なのである。すなわち、我々が時間を経験するとは、自己という存在の構成そのものを意味する。<br>\
+    ';
+    ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+      文章１<br> ' + ExamRaw[ExamNumber] + '</div></div>';
+    // ---------------------------------------------------------------------
+    Exam[ExamNumber] = {
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[ExamNumber],
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+      stimulus         : ExamText[ExamNumber],
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
     ExamQuestions[ExamNumber] = [
       {
-        prompt: '問１ 筆者の主張として最も適切なのはどれか。',
+        prompt : '問１ 筆者の主張として最も適切なのはどれか。',
         options: [
-          '　①時間は人間の記憶によって直線的に捉えられる。', 
-          '　②出来事の意味は、経験の瞬間に確定する。', 
-          '　③時間とは、物理的現象というより意味の構造である。', 
-          '　④過去は変えられない以上、意味も固定的である。', 
+          '　①時間は人間の記憶によって直線的に捉えられる。',
+          '　②出来事の意味は、経験の瞬間に確定する。',
+          '　③時間とは、物理的現象というより意味の構造である。',
+          '　④過去は変えられない以上、意味も固定的である。',
           '　⑤未来を考えることは現在の妨げとなる。'
         ]
       },
       {
-        prompt: '問２「意味が時間を遡って形成される」とはどういうことか。',
+        prompt : '問２「意味が時間を遡って形成される」とはどういうことか。',
         options: [
-          '　①意味ある出来事は予め予定されているという思想である。', 
-          '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。', 
-          '　③時間は常に因果に従って進行するという認識である。', 
-          '　④過去は未来の視点からのみ語られるという決定論である。', 
+          '　①意味ある出来事は予め予定されているという思想である。',
+          '　②出来事が起こった瞬間には意味がなく、後から文脈が与えられる。',
+          '　③時間は常に因果に従って進行するという認識である。',
+          '　④過去は未来の視点からのみ語られるという決定論である。',
           '　⑤出来事の価値は、その時点での感情によって固定される。 '
         ]
       },
       {
-        prompt: '問３ 本文の内容に最も合致する考え方はどれか。',
+        prompt : '問３ 本文の内容に最も合致する考え方はどれか。',
         options: [
-          '　①記憶は過去を忠実に保持する重要な情報資源である。', 
-          '　②意味の再構成により、過去の出来事も変化しうる。', 
-          '　③未来に希望をもたぬ者は、時間を経験することができない。', 
-          '　④現在を理解するには、まず未来を捨てる必要がある。', 
+          '　①記憶は過去を忠実に保持する重要な情報資源である。',
+          '　②意味の再構成により、過去の出来事も変化しうる。',
+          '　③未来に希望をもたぬ者は、時間を経験することができない。',
+          '　④現在を理解するには、まず未来を捨てる必要がある。',
           '　⑤出来事の意味は、発生の順序に従って変化する。'
         ]
       },
       {
-        prompt: '問４ 本文における「未来」の特徴として最も適切なのはどれか。',
+        prompt : '問４ 本文における「未来」の特徴として最も適切なのはどれか。',
         options: [
-          '　①客観的予測によって構成される安定した領域である。', 
-          '　②現在に対して価値中立的に作用する想念である。', 
-          '　③想像にすぎないが、現在の行動に実質的影響を与える。', 
-          '　④過去の反復としてのみ捉えられる時間の残響である。', 
+          '　①客観的予測によって構成される安定した領域である。',
+          '　②現在に対して価値中立的に作用する想念である。',
+          '　③想像にすぎないが、現在の行動に実質的影響を与える。',
+          '　④過去の反復としてのみ捉えられる時間の残響である。',
           '　⑤意識されることなく到来する、偶然性の領域である。'
         ]
       },
       {
-        prompt: '問５ 本文に通底する世界観に最も近いものはどれか。',
+        prompt : '問５ 本文に通底する世界観に最も近いものはどれか。',
         options: [
-          '　①人間は過去と未来に翻弄され、現在を生きることができない。', 
-          '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。', 
-          '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。', 
-          '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。', 
+          '　①人間は過去と未来に翻弄され、現在を生きることができない。',
+          '　②時間とは単なる流れではなく、人間によって構築される関係的な次元である。',
+          '　③意味とは物事に本来的に備わったものであり、時間とは無関係である。',
+          '　④現在の選択こそが絶対的であり、時間の他の要素は従属的である。',
           '　⑤時間の構造を理解するには、物理学的観測が最も信頼できる手段である。'
         ]
       }
     ];
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // 問題2
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamNumber = 2 ; // koko
-
-  ExamRaw[ExamNumber] = ' \
-    　制度とは、秩序を確保するために設計された枠組みである。だがそれが機能するのは、人々が自らを制度に従属させることを選ぶときだけである。この選択は、しばしば無意識に行われ、制度はあたかも当然の前提として受け入れられる。こうして制度は、人間の行動を規定するのではなく、人間が自らを規定可能な存在として振る舞うことによって成立する。<br>\
-    　一方で、制度が前提とする秩序は常に逸脱の可能性に晒されている。すべての制度は、それによって排除されるもの、つまり逸脱を含むことで初めて輪郭を持つ。逸脱がなければ制度は可視化されない。むしろ逸脱が制度の存在を逆説的に明らかにする。逸脱は秩序の敵ではなく、秩序が秩序として自覚される契機である。<br>\
-    　また逸脱は、単なる制度の否定ではない。それは制度の限界を露呈させ、時に制度の内部から制度を刷新する力ともなる。制度は、逸脱によって批判され、再定義され、延命される。制度に対する盲目的服従は制度を腐敗させるが、絶え間ない逸脱が制度を鍛える。制度と逸脱は対立ではなく、共依存の関係にある。<br>\
-    　しかし、多くの場合、逸脱は例外として処理され、個人の逸失や逸脱者の人格に還元される。制度に挑むことが、逸脱者に烙印を押す構造そのものが、制度の防衛機構である。だがそれは、制度が本来持っていた柔軟性や可塑性を放棄し、自己目的化している兆候でもある。<br>\
-    　制度を問い直すには、逸脱を異常として隔離するのではなく、それが何を照らし出しているかを読む視線が必要だ。逸脱は破壊ではなく、構造の裂け目を顕にする。そしてその裂け目を通して初めて、制度が保持してきた暗黙の選好や、排除の論理を捉えることができるのである。<br>\
-  ' ;
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章２<br> ' + ExamRaw[ExamNumber] + '</div></div>';
-  // ---------------------------------------------------------------------
-    Exam[ExamNumber] = { 
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 問題2
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ExamNumber           = 2; // koko
+    ExamRaw[ExamNumber]  = ' \
+      　制度とは、秩序を確保するために設計された枠組みである。だがそれが機能するのは、人々が自らを制度に従属させることを選ぶときだけである。この選択は、しばしば無意識に行われ、制度はあたかも当然の前提として受け入れられる。こうして制度は、人間の行動を規定するのではなく、人間が自らを規定可能な存在として振る舞うことによって成立する。<br>\
+      　一方で、制度が前提とする秩序は常に逸脱の可能性に晒されている。すべての制度は、それによって排除されるもの、つまり逸脱を含むことで初めて輪郭を持つ。逸脱がなければ制度は可視化されない。むしろ逸脱が制度の存在を逆説的に明らかにする。逸脱は秩序の敵ではなく、秩序が秩序として自覚される契機である。<br>\
+      　また逸脱は、単なる制度の否定ではない。それは制度の限界を露呈させ、時に制度の内部から制度を刷新する力ともなる。制度は、逸脱によって批判され、再定義され、延命される。制度に対する盲目的服従は制度を腐敗させるが、絶え間ない逸脱が制度を鍛える。制度と逸脱は対立ではなく、共依存の関係にある。<br>\
+      　しかし、多くの場合、逸脱は例外として処理され、個人の逸失や逸脱者の人格に還元される。制度に挑むことが、逸脱者に烙印を押す構造そのものが、制度の防衛機構である。だがそれは、制度が本来持っていた柔軟性や可塑性を放棄し、自己目的化している兆候でもある。<br>\
+      　制度を問い直すには、逸脱を異常として隔離するのではなく、それが何を照らし出しているかを読む視線が必要だ。逸脱は破壊ではなく、構造の裂け目を顕にする。そしてその裂け目を通して初めて、制度が保持してきた暗黙の選好や、排除の論理を捉えることができるのである。<br>\
+    ';
+    ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+      文章２<br> ' + ExamRaw[ExamNumber] + '</div></div>';
+    // ---------------------------------------------------------------------
+    Exam[ExamNumber] = {
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[ExamNumber],
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+      stimulus         : ExamText[ExamNumber],
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
     ExamQuestions[ExamNumber] = [
       {
-        prompt: '問１ 筆者の主張として最も適切なのはどれか。',
+        prompt : '問１ 筆者の主張として最も適切なのはどれか。',
         options: [
-          '　① 制度は人間によって管理されるべき絶対的枠組みである。', 
-          '　② 制度とは逸脱の排除によってのみ成立するものである。', 
-          '　③ 逸脱は制度の敵であり、徹底的に無化されるべきである。', 
-          '　④ 制度は逸脱によって可視化され、時に刷新される。', 
+          '　① 制度は人間によって管理されるべき絶対的枠組みである。',
+          '　② 制度とは逸脱の排除によってのみ成立するものである。',
+          '　③ 逸脱は制度の敵であり、徹底的に無化されるべきである。',
+          '　④ 制度は逸脱によって可視化され、時に刷新される。',
           '　⑤ 制度の持続は、逸脱を厳格に管理する能力にかかっている。'
         ]
       },
       {
-        prompt: '問２ 本文によれば、逸脱が制度を明らかにするのはなぜか。',
+        prompt : '問２ 本文によれば、逸脱が制度を明らかにするのはなぜか。',
         options: [
-          '　① 逸脱は制度の内在的矛盾を具体的に示すため。', 
-          '　② 逸脱は制度の成員からの信頼を失墜させるため。', 
-          '　③ 制度の論理は逸脱の処理に失敗するから。', 
-          '　④ 逸脱が制度の適用範囲の拡張を可能にするから。', 
+          '　① 逸脱は制度の内在的矛盾を具体的に示すため。',
+          '　② 逸脱は制度の成員からの信頼を失墜させるため。',
+          '　③ 制度の論理は逸脱の処理に失敗するから。',
+          '　④ 逸脱が制度の適用範囲の拡張を可能にするから。',
           '　⑤ 逸脱がなければ制度の存在そのものが意識されないから。 '
         ]
       },
       {
-        prompt: '問３ 本文の論理から導かれる考えに最も近いものはどれか。',
+        prompt : '問３ 本文の論理から導かれる考えに最も近いものはどれか。',
         options: [
-          '　① 制度は完全でなければ正当化されない。', 
-          '　② 逸脱が制度の枠内に収まらない限り、それは社会的脅威である。', 
-          '　③ 制度は逸脱を経験することで進化する可能性を持つ。', 
-          '　④ 制度の正統性は、多数派による支持に依存する。', 
+          '　① 制度は完全でなければ正当化されない。',
+          '　② 逸脱が制度の枠内に収まらない限り、それは社会的脅威である。',
+          '　③ 制度は逸脱を経験することで進化する可能性を持つ。',
+          '　④ 制度の正統性は、多数派による支持に依存する。',
           '　⑤ 逸脱は制度と断絶した全く別の論理に基づいている。 '
         ]
       },
       {
-        prompt: '問４ 本文において「制度の防衛機構」として示唆されているのはどれか。',
+        prompt : '問４ 本文において「制度の防衛機構」として示唆されているのはどれか。',
         options: [
-          '　① 逸脱を異常と見なして個人の問題に還元する構造', 
-          '　② 制度を批判的に捉え直す社会的合意形成の機構', 
-          '　③ 逸脱を制度に取り込むための法的整備のこと', 
-          '　④ 逸脱者を制度の維持者として再配置すること', 
+          '　① 逸脱を異常と見なして個人の問題に還元する構造',
+          '　② 制度を批判的に捉え直す社会的合意形成の機構',
+          '　③ 逸脱を制度に取り込むための法的整備のこと',
+          '　④ 逸脱者を制度の維持者として再配置すること',
           '　⑤ 逸脱が制度外にあるという前提そのものを否定すること '
         ]
       },
       {
-        prompt: '問５ 本文全体に共通する制度観として最も適切なのはどれか。',
+        prompt : '問５ 本文全体に共通する制度観として最も適切なのはどれか。',
         options: [
-          '　① 制度は逸脱を排除することで秩序を保つ防壁である。', 
-          '　② 制度は固定的であり、逸脱はそれと常に敵対する。', 
-          '　③ 制度と逸脱は相互に依存し、制度の変化を可能にする。', 
-          '　④ 制度の本質は逸脱を許容しない厳密な論理にある。', 
+          '　① 制度は逸脱を排除することで秩序を保つ防壁である。',
+          '　② 制度は固定的であり、逸脱はそれと常に敵対する。',
+          '　③ 制度と逸脱は相互に依存し、制度の変化を可能にする。',
+          '　④ 制度の本質は逸脱を許容しない厳密な論理にある。',
           '　⑤ 制度は人間の本性に反する人工的な構造である。 '
         ]
       }
     ];
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // 問題3
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamNumber = 3 ; // koko
-  ExamRaw[ExamNumber] = ' \
-    　人は未来を予測することで、偶然を制御可能なものとみなそうとする。天気予報、株価の動向、個人のライフプラン――これらはすべて、不確実性に輪郭を与える試みである。だが興味深いのは、予測が的中すればするほど、その背後にある偶然性がかえって不可視化されていくという点である。予測が精度を増すとき、偶然は「誤差」として排除されるのだ。<br>\
-    　しかし、この構造は一つの幻想に支えられている。すなわち、偶然は予測によって矯正可能である、という信仰である。だが偶然は本質的に、法則から逸脱するものではなく、むしろ法則の内部で発生する余白そのものである。コインを投げる行為において、裏が出る確率は五割であっても、実際に出るのは一つだけである。この一回性において偶然は現れる。<br>\
-    　予測とはこの「一回性」を捨象する行為にほかならない。統計や傾向は、無数の過去の集積から導かれるが、個々の未来は常にそれを裏切り得る。ゆえに予測が成立するのは、偶然を無視する構造の上においてである。偶然を完全に織り込んだ予測は、もはや予測ではなく、ただの確率分布にすぎない。<br>\
-    　ところが現代社会では、予測が制度や計画の前提として機能するため、偶然の余地がますます否定されがちである。だが偶然こそが、世界に裂け目を開ける契機である。予測不能な出来事がなければ、新しい意味や価値も生まれない。偶然とは秩序の敵ではなく、秩序が自己更新するための「攪乱」として必要不可欠なのだ。<br>\
-    　結局、予測と偶然は対立ではなく、非対称な補完関係にある。予測は秩序を求め、偶然は裂け目を差し出す。その緊張のなかでしか、世界は意味を持ち得ないのである。<br>\
-  ' ;
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章３<br> ' + ExamRaw[ExamNumber] + '</div></div>';
-  // ---------------------------------------------------------------------
-    Exam[ExamNumber] = { 
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 問題3
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ExamNumber           = 3; // koko
+    ExamRaw[ExamNumber]  = ' \
+      　人は未来を予測することで、偶然を制御可能なものとみなそうとする。天気予報、株価の動向、個人のライフプラン――これらはすべて、不確実性に輪郭を与える試みである。だが興味深いのは、予測が的中すればするほど、その背後にある偶然性がかえって不可視化されていくという点である。予測が精度を増すとき、偶然は「誤差」として排除されるのだ。<br>\
+      　しかし、この構造は一つの幻想に支えられている。すなわち、偶然は予測によって矯正可能である、という信仰である。だが偶然は本質的に、法則から逸脱するものではなく、むしろ法則の内部で発生する余白そのものである。コインを投げる行為において、裏が出る確率は五割であっても、実際に出るのは一つだけである。この一回性において偶然は現れる。<br>\
+      　予測とはこの「一回性」を捨象する行為にほかならない。統計や傾向は、無数の過去の集積から導かれるが、個々の未来は常にそれを裏切り得る。ゆえに予測が成立するのは、偶然を無視する構造の上においてである。偶然を完全に織り込んだ予測は、もはや予測ではなく、ただの確率分布にすぎない。<br>\
+      　ところが現代社会では、予測が制度や計画の前提として機能するため、偶然の余地がますます否定されがちである。だが偶然こそが、世界に裂け目を開ける契機である。予測不能な出来事がなければ、新しい意味や価値も生まれない。偶然とは秩序の敵ではなく、秩序が自己更新するための「攪乱」として必要不可欠なのだ。<br>\
+      　結局、予測と偶然は対立ではなく、非対称な補完関係にある。予測は秩序を求め、偶然は裂け目を差し出す。その緊張のなかでしか、世界は意味を持ち得ないのである。<br>\
+    ';
+    ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+      文章３<br> ' + ExamRaw[ExamNumber] + '</div></div>';
+    // ---------------------------------------------------------------------
+    Exam[ExamNumber] = {
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[ExamNumber],
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+      stimulus         : ExamText[ExamNumber],
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
     ExamQuestions[ExamNumber] = [
       {
-        prompt: '問１ 筆者の議論全体から見て、最も根本的な主張に近いのはどれか。',
+        prompt : '問１ 筆者の議論全体から見て、最も根本的な主張に近いのはどれか。',
         options: [
-          '　① 偶然性の排除こそが予測の精度向上に寄与するが、それは制度的秩序を過剰に硬直化させる。', 
-          '　② 偶然は予測の失敗によってのみ意識されるが、実は秩序の構造的内在要因として機能している。', 
-          '　③ 予測は偶然という異物を包摂しようとするが、それは結局、偶然の本質を誤解した営みにすぎない。', 
-          '　④ 偶然と予測は原理的に矛盾するが、社会的には両者を統合せざるを得ないという緊張が存在する。', 
+          '　① 偶然性の排除こそが予測の精度向上に寄与するが、それは制度的秩序を過剰に硬直化させる。',
+          '　② 偶然は予測の失敗によってのみ意識されるが、実は秩序の構造的内在要因として機能している。',
+          '　③ 予測は偶然という異物を包摂しようとするが、それは結局、偶然の本質を誤解した営みにすぎない。',
+          '　④ 偶然と予測は原理的に矛盾するが、社会的には両者を統合せざるを得ないという緊張が存在する。',
           '　⑤ 未来に意味を与えるのは予測であり、偶然はその意味付けに対する偶発的なノイズにすぎない。'
         ]
       },
       {
-        prompt: '問２「予測が精度を増すとき、偶然は『誤差』として排除される」とあるが、この記述が含意している思考の落とし穴として最も適切なのはどれか。',
+        prompt : '問２「予測が精度を増すとき、偶然は『誤差』として排除される」とあるが、この記述が含意している思考の落とし穴として最も適切なのはどれか。',
         options: [
-          '　① 予測の正確性が偶然の発生頻度を減少させるという誤信が強化されること。', 
-          '　② 精度の高い予測によって、偶然の価値が体系的に測定可能になるという錯覚が生まれること。', 
-          '　③ 偶然を予測の余剰として扱うことで、予測が抱える構造的限界が見えなくなること。', 
-          '　④ 予測の的中率が偶然性の存在そのものを否定する論理的飛躍につながること。', 
+          '　① 予測の正確性が偶然の発生頻度を減少させるという誤信が強化されること。',
+          '　② 精度の高い予測によって、偶然の価値が体系的に測定可能になるという錯覚が生まれること。',
+          '　③ 偶然を予測の余剰として扱うことで、予測が抱える構造的限界が見えなくなること。',
+          '　④ 予測の的中率が偶然性の存在そのものを否定する論理的飛躍につながること。',
           '　⑤ 偶然と予測の関係を統計的に解釈することで、両者の原理的対立が見落とされること。'
         ]
       },
       {
-        prompt: '問３ 本文において「一回性」が持つ概念的役割として最も適切なものはどれか。',
+        prompt : '問３ 本文において「一回性」が持つ概念的役割として最も適切なものはどれか。',
         options: [
-          '　① 一回性は偶然を再現不可能にし、予測の範囲外にあるものとして扱うことを要請する。', 
-          '　② 一回性は統計的予測の例外ではなく、むしろ偶然の現象性を担保する装置として位置づけられている。', 
-          '　③ 一回性は予測が想定する反復性と矛盾するため、社会的には排除される傾向が強い。', 
-          '　④ 一回性とは、偶然を論理的に記述可能にするための境界概念にすぎない。', 
+          '　① 一回性は偶然を再現不可能にし、予測の範囲外にあるものとして扱うことを要請する。',
+          '　② 一回性は統計的予測の例外ではなく、むしろ偶然の現象性を担保する装置として位置づけられている。',
+          '　③ 一回性は予測が想定する反復性と矛盾するため、社会的には排除される傾向が強い。',
+          '　④ 一回性とは、偶然を論理的に記述可能にするための境界概念にすぎない。',
           '　⑤ 一回性がある限り、偶然は論理的体系の外に留まり続けるため、予測不可能性は絶対である。'
         ]
       },
       {
-        prompt: '問４ 筆者の議論に照らして、現代社会における予測の制度的機能について最も妥当な理解はどれか。',
+        prompt : '問４ 筆者の議論に照らして、現代社会における予測の制度的機能について最も妥当な理解はどれか。',
         options: [
-          '　① 予測は社会秩序を設計する基盤であるが、その安定性ゆえに偶然の余地を意図的に作り出す機能も担っている。', 
-          '　② 制度は偶然性を前提に設計されているが、予測の高度化によりその柔軟性が失われつつある。', 
-          '　③ 現代社会では予測が制度的合理性の根幹となっており、それに　よって偶然性は秩序から排除される傾向にある。', 
-          '　④ 社会制度は予測の失敗を前提に構築されており、偶然の発生によって再帰的に更新される構造を持つ。', 
+          '　① 予測は社会秩序を設計する基盤であるが、その安定性ゆえに偶然の余地を意図的に作り出す機能も担っている。',
+          '　② 制度は偶然性を前提に設計されているが、予測の高度化によりその柔軟性が失われつつある。',
+          '　③ 現代社会では予測が制度的合理性の根幹となっており、それに　よって偶然性は秩序から排除される傾向にある。',
+          '　④ 社会制度は予測の失敗を前提に構築されており、偶然の発生によって再帰的に更新される構造を持つ。',
           '　⑤ 予測は制度的な管理に奉仕するが、偶然の存在はむしろその制度を支える補助線として活用されている。'
         ]
       },
       {
-        prompt: '問５ 本文の最終段落における「予測と偶然の非対称な補完関係」という表現の深層的な意味として、最も適切なのはどれか。',
+        prompt : '問５ 本文の最終段落における「予測と偶然の非対称な補完関係」という表現の深層的な意味として、最も適切なのはどれか。',
         options: [
-          '　① 予測が未来を描く際、偶然はその未来の図像を批判的に書き換える装置として作用する。', 
-          '　② 偶然は予測によって条件づけられるが、予測は偶然によって常に修正を迫られる。', 
-          '　③ 偶然は予測を脱構築することで、その制度的機能を強化するという逆説的役割を担う。', 
-          '　④ 予測は秩序を形成する規範的作用を持ち、偶然はその構造を撹乱しつつ刷新する動的原理である。', 
+          '　① 予測が未来を描く際、偶然はその未来の図像を批判的に書き換える装置として作用する。',
+          '　② 偶然は予測によって条件づけられるが、予測は偶然によって常に修正を迫られる。',
+          '　③ 偶然は予測を脱構築することで、その制度的機能を強化するという逆説的役割を担う。',
+          '　④ 予測は秩序を形成する規範的作用を持ち、偶然はその構造を撹乱しつつ刷新する動的原理である。',
           '　⑤ 偶然と予測は互いの存在を条件づける双方向的な対称関係にあり、世界はその平衡で成り立つ。'
         ]
       }
     ];
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // 問題4
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamNumber = 4 ; // koko
-  ExamRaw[ExamNumber] = ' \
-    　何かを所有するということは、それを他のすべてのものから区別し、自らの領域に取り込むことを意味する。しかしその瞬間、所有は対象の独立性を奪い、関係性の網から切り離す。例えば「私の本」と言ったとき、それはもはやただの本ではなく、他の誰かの手から引き離された存在としてある。所有とは、世界を分割する行為にほかならない。<br>\
-    　だが奇妙なことに、所有は往々にして不安を伴う。所有物は失われる可能性にさらされているからである。手に入れた途端、喪失が視界に入る。つまり所有とは、喪失の予感を引き寄せる形でもある。所有物に執着すればするほど、それを失うことへの恐れも深まる。この逆説において、所有と喪失は対立するものではなく、むしろ相互依存の関係にある。<br>\
-    　さらに喪失されたものは、しばしば記憶や感情の中でかえって鮮明になる。手元にないからこそ、それは観念の中で理想化される。「かつてあったもの」は、「今あるもの」よりも強く意識されることすらある。喪失は、単なる欠如ではなく、意味の再構成を促す契機となる。<br>\
-    　このとき、所有していたという事実は、喪失されたことによって初めて強く意識される。「持っていた」ことは、「今はない」という断絶の中で初めて輪郭を得る。つまり、所有は喪失によって証明される。所有していたことを本当に理解するのは、それを失ってからなのである。<br>\
-    　ゆえに、所有とは安定的な状態ではなく、喪失への一時的な抵抗に過ぎない。我々が所有にこだわるとき、実は喪失の可能性に抗おうとしているのかもしれない。そして、喪失は常に新たな意味を生み出す。その意味において、喪失とは、所有よりも深く我々の存在を揺さぶり、問い直す力を持つ。<br>\
-  ' ;
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
-    文章４<br> ' + ExamRaw[ExamNumber] + '</div></div>';
-  // ---------------------------------------------------------------------
-    Exam[ExamNumber] = { 
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 問題4
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ExamNumber           = 4; // koko
+    ExamRaw[ExamNumber]  = ' \
+      　何かを所有するということは、それを他のすべてのものから区別し、自らの領域に取り込むことを意味する。しかしその瞬間、所有は対象の独立性を奪い、関係性の網から切り離す。例えば「私の本」と言ったとき、それはもはやただの本ではなく、他の誰かの手から引き離された存在としてある。所有とは、世界を分割する行為にほかならない。<br>\
+      　だが奇妙なことに、所有は往々にして不安を伴う。所有物は失われる可能性にさらされているからである。手に入れた途端、喪失が視界に入る。つまり所有とは、喪失の予感を引き寄せる形でもある。所有物に執着すればするほど、それを失うことへの恐れも深まる。この逆説において、所有と喪失は対立するものではなく、むしろ相互依存の関係にある。<br>\
+      　さらに喪失されたものは、しばしば記憶や感情の中でかえって鮮明になる。手元にないからこそ、それは観念の中で理想化される。「かつてあったもの」は、「今あるもの」よりも強く意識されることすらある。喪失は、単なる欠如ではなく、意味の再構成を促す契機となる。<br>\
+      　このとき、所有していたという事実は、喪失されたことによって初めて強く意識される。「持っていた」ことは、「今はない」という断絶の中で初めて輪郭を得る。つまり、所有は喪失によって証明される。所有していたことを本当に理解するのは、それを失ってからなのである。<br>\
+      　ゆえに、所有とは安定的な状態ではなく、喪失への一時的な抵抗に過ぎない。我々が所有にこだわるとき、実は喪失の可能性に抗おうとしているのかもしれない。そして、喪失は常に新たな意味を生み出す。その意味において、喪失とは、所有よりも深く我々の存在を揺さぶり、問い直す力を持つ。<br>\
+    ';
+    ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+      文章４<br> ' + ExamRaw[ExamNumber] + '</div></div>';
+    // ---------------------------------------------------------------------
+    Exam[ExamNumber] = {
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[ExamNumber],
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+      stimulus         : ExamText[ExamNumber],
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
     ExamQuestions[ExamNumber] = [
       {
-        prompt: '問１ 本文の全体構成から浮かび上がる筆者の主題的問いとして、最も妥当なのはどれか',
+        prompt : '問１ 本文の全体構成から浮かび上がる筆者の主題的問いとして、最も妥当なのはどれか',
         options: [
-          '　① 所有と喪失がどのように人間の時間意識を変容させるか', 
-          '　② 所有という営為が、いかに喪失と連動して存在の自己認識を形づくるか', 
-          '　③ 所有とはどのような心理的契機によって発生するのか', 
-          '　④ 喪失を通じて所有が自己目的化する過程に、いかなる社会的規制があるか', 
+          '　① 所有と喪失がどのように人間の時間意識を変容させるか',
+          '　② 所有という営為が、いかに喪失と連動して存在の自己認識を形づくるか',
+          '　③ 所有とはどのような心理的契機によって発生するのか',
+          '　④ 喪失を通じて所有が自己目的化する過程に、いかなる社会的規制があるか',
           '　⑤ 所有が喪失によって成立するという逆説が、人間の関係性に与 える影響とは何か'
         ]
       },
       {
-        prompt: '問２ 「所有とは、世界を分割する行為にほかならない」とする主張の本質的意味として最も適切なのはどれか。',
+        prompt : '問２ 「所有とは、世界を分割する行為にほかならない」とする主張の本質的意味として最も適切なのはどれか。',
         options: [
-          '　① 所有は本来多元的であった関係性の網を、単数的視座へと切り縮めてしまう', 
-          '　② 所有は主体による世界の選別であり、見えなかった境界線を言語化する操作である', 
-          '　③ 所有は対象とのつながりを切り離し、他者性を抑圧する方向に働く行為である', 
-          '　④ 所有とは、客観世界に秩序を与えると同時に、自己と世界の断絶を明確にする行為である', 
+          '　① 所有は本来多元的であった関係性の網を、単数的視座へと切り縮めてしまう',
+          '　② 所有は主体による世界の選別であり、見えなかった境界線を言語化する操作である',
+          '　③ 所有は対象とのつながりを切り離し、他者性を抑圧する方向に働く行為である',
+          '　④ 所有とは、客観世界に秩序を与えると同時に、自己と世界の断絶を明確にする行為である',
           '　⑤ 所有とは、社会的同意のもとに対象に意味を刻印する一種の記号作用である'
         ]
       },
       {
-        prompt: '問３ 本文で語られる「喪失」の逆説的機能として、最も精緻に説明しているものはどれか。',
+        prompt : '問３ 本文で語られる「喪失」の逆説的機能として、最も精緻に説明しているものはどれか。',
         options: [
-          '　① 喪失は、所有がすでに成立していたことを遡及的に可視化し、意味の再構築を促す', 
-          '　② 喪失は、所有という経験に対する距離化を通じて、記憶を理想化へと変質させる', 
-          '　③ 喪失は、感情的欠如をもたらす一方で、所有の正当性を補強する契機にもなる', 
-          '　④ 喪失は、所有という行為の無意味さを逆照射し、その相対性を際立たせる', 
+          '　① 喪失は、所有がすでに成立していたことを遡及的に可視化し、意味の再構築を促す',
+          '　② 喪失は、所有という経験に対する距離化を通じて、記憶を理想化へと変質させる',
+          '　③ 喪失は、感情的欠如をもたらす一方で、所有の正当性を補強する契機にもなる',
+          '　④ 喪失は、所有という行為の無意味さを逆照射し、その相対性を際立たせる',
           '　⑤ 喪失によってのみ、所有の成立が自己の記憶の中で再編されるという循環が生じる'
         ]
       },
       {
-        prompt: '問４ 「喪失によって所有が証明される」という命題が含意する、時間論的な構造に最も即しているのはどれか。',
+        prompt : '問４ 「喪失によって所有が証明される」という命題が含意する、時間論的な構造に最も即しているのはどれか。',
         options: [
-          '　① 喪失という出来事が、過去に存在した所有という経験を未来的に構造化する', 
-          '　② 喪失という断絶が、かつての所有を後付けで解釈可能な記憶として再構築させる', 
-          '　③ 喪失が所有の不在を前提とすることで、存在論的な欠如感を喚起する', 
-          '　④ 喪失が生じることで、所有という事実が初めて歴史的証明に値するものとなる', 
+          '　① 喪失という出来事が、過去に存在した所有という経験を未来的に構造化する',
+          '　② 喪失という断絶が、かつての所有を後付けで解釈可能な記憶として再構築させる',
+          '　③ 喪失が所有の不在を前提とすることで、存在論的な欠如感を喚起する',
+          '　④ 喪失が生じることで、所有という事実が初めて歴史的証明に値するものとなる',
           '　⑤ 喪失を媒介に、時間的連続のなかで所有が存在から意味へと転化する'
         ]
       },
       {
-        prompt: '問５ 本文の筆者の立場を、最も包括的かつ厳密に表現しているのはどれか。',
+        prompt : '問５ 本文の筆者の立場を、最も包括的かつ厳密に表現しているのはどれか。',
         options: [
-          '　① 所有は喪失への無意識的抵抗であり、その不安定性こそが人間存在の根本構造である', 
-          '　② 所有とは一時的な確保の行為であるが、それは最終的に喪失によって上書きされる運命にある', 
-          '　③ 所有という行為は、自己同一性を一時的に確保しようとするが、必ず喪失の不安を引き寄せる', 
-          '　④ 所有は感情的満足を一時的にもたらすが、やがてそれは喪失という形で心理的矛盾を生む', 
+          '　① 所有は喪失への無意識的抵抗であり、その不安定性こそが人間存在の根本構造である',
+          '　② 所有とは一時的な確保の行為であるが、それは最終的に喪失によって上書きされる運命にある',
+          '　③ 所有という行為は、自己同一性を一時的に確保しようとするが、必ず喪失の不安を引き寄せる',
+          '　④ 所有は感情的満足を一時的にもたらすが、やがてそれは喪失という形で心理的矛盾を生む',
           '　⑤ 所有という欲望が根源的である限り、人は常に喪失の予感に抗い続けるしかない'
         ]
       }
     ];
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // 問題5 は、問題1 とフォントだけが違う
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamNumber = 5 ; // koko
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
-    文章５<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
-  // ---------------------------------------------------------------------
-    Exam[ExamNumber] = { 
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 問題5 は、問題1 とフォントだけが違う
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ExamNumber           = 5; // koko
+    ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
+      文章５<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
+    // ---------------------------------------------------------------------
+    Exam[ExamNumber] = {
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[ExamNumber],
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+      stimulus         : ExamText[ExamNumber],
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
-    ExamQuestions[ExamNumber] = ExamQuestions[ExamNumber - 4] ;
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // 問題6 は、問題2 とフォントだけが違う
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamNumber = 6 ; // koko
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
-    文章６<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
-  // ---------------------------------------------------------------------
-    Exam[ExamNumber] = { 
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+    ExamQuestions[ExamNumber] = ExamQuestions[ExamNumber - 4];
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 問題6 は、問題2 とフォントだけが違う
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ExamNumber           = 6; // koko
+    ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
+      文章６<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
+    // ---------------------------------------------------------------------
+    Exam[ExamNumber] = {
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[ExamNumber],
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+      stimulus         : ExamText[ExamNumber],
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
-    ExamQuestions[ExamNumber] = ExamQuestions[ExamNumber - 4] ;
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // 問題7 は、問題3 とフォントだけが違う
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamNumber = 7 ; // koko
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
-    文章７<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
-  // ---------------------------------------------------------------------
-    Exam[ExamNumber] = { 
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+    ExamQuestions[ExamNumber] = ExamQuestions[ExamNumber - 4];
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 問題7 は、問題3 とフォントだけが違う
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ExamNumber           = 7; // koko
+    ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
+      文章７<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
+    // ---------------------------------------------------------------------
+    Exam[ExamNumber] = {
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[ExamNumber],
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+      stimulus         : ExamText[ExamNumber],
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
-    ExamQuestions[ExamNumber] = ExamQuestions[ExamNumber - 4] ;
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  // 問題8 は、問題4 とフォントだけが違う
-  // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-  ExamNumber = 8 ; // koko
-  ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
-    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
-    文章８<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
-  // ---------------------------------------------------------------------
-    Exam[ExamNumber] = { 
-      type: jsPsychHtmlKeyboardResponse,
-      margin_vertical: '100px',
+    ExamQuestions[ExamNumber] = ExamQuestions[ExamNumber - 4];
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    // 問題8 は、問題4 とフォントだけが違う
+    // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+    ExamNumber           = 8; // koko
+    ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
+      文章８<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
+    // ---------------------------------------------------------------------
+    Exam[ExamNumber] = {
+      type             : jsPsychHtmlKeyboardResponse,
+      margin_vertical  : '100px',
       margin_horizontal: '100px',
-      stimulus: ExamText[ExamNumber],
-      choices: 'q',
-      trial_duration: stimulusDuration, // 前のグローバル変数で定義
+      stimulus         : ExamText[ExamNumber],
+      choices          : 'q',
+      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
     };
-  // ---------------------------------------------------------------------
+    // ---------------------------------------------------------------------
     // 質問内容を配列で定義
-    ExamQuestions[ExamNumber] = ExamQuestions[ExamNumber - 4] ;
+    ExamQuestions[ExamNumber] = ExamQuestions[ExamNumber - 4];
 
-  // ---------------------------------------------------------------------
-  // 試行を1セット作成してキューイング
-  function addExamBlockToTimeline(ExamNumber) { 
-    var ExamIndex = [
-      "",
-      "問題１",
-      "問題２",
-      "問題３",
-      "問題４",
-      "問題５",
-      "問題６",
-      "問題７",
-      "問題８"
-    ];
+    // ---------------------------------------------------------------------
+    // 試行を1セット作成してキューイング
+    function addExamBlockToTimeline(ExamNumber) {
+      var ExamIndex = [
+        "",
+        "問題１",
+        "問題２",
+        "問題３",
+        "問題４",
+        "問題５",
+        "問題６",
+        "問題７",
+        "問題８"
+      ];
 
-    Trials.timeline.push(TrialPage1);            // これから2分間、文章を読んでいただきます。
-    Trials.timeline.push(Exam[ExamNumber]);      // 問題呈示部分をキューイング
-    Trials.timeline.push(TrialPage2);            // これから5問に答えてください
-    ExamAnswer[ExamNumber] = [];                 // 縦書き質問群の配列を初期化
-    Trials.timeline.push(MakeQuestion5(ExamIndex[ExamNumber], ExamText[ExamNumber]) );
-    Trials.timeline.push(TrialPage3,QofFont);    // フォントの感想をキューイング
-  } ;
-  // ---------------------------------------------------------------------
-  // 本番試行 引数?patternで指定したグループの出し分け
-  // case '1': // グループ1 = 1→2→7→8
-  // case '2': // グループ2 = 7→8→1→2
-  // case '3': // グループ3 = 3→4→5→6
-  // case '4': // グループ4 = 5→6→3→4
-/*
-  // タイムラインに追加
+      Trials.timeline.push(TrialPage1);                             // これから2分間、文章を読んでいただきます。
+      Trials.timeline.push(Exam[ExamNumber]);                       // 問題呈示部分をキューイング
+      Trials.timeline.push(TrialPage2);                             // これから5問に答えてください
+      ExamAnswer[ExamNumber] = [];                                  // 縦書き質問群の配列を初期化
+      Trials.timeline.push(MakeQuestion5(ExamIndex[ExamNumber], ExamText[ExamNumber]));
+      Trials.timeline.push(TrialPage3, QofFont);                    // フォントの感想をキューイング
+    };
+    // ---------------------------------------------------------------------
+    // 本番試行 引数?patternで指定したグループの出し分け
+    // case '1': // グループ1 = 1→2→7→8
+    // case '2': // グループ2 = 7→8→1→2
+    // case '3': // グループ3 = 3→4→5→6
+    // case '4': // グループ4 = 5→6→3→4
+    /*
+      // タイムラインに追加
       PracticeTrials.timeline.push(PracticePage1, PracticeExam1, TrialPage2);
-    for (let i = 0; i < PracticeAnswer.length; i++) { PracticeTrials.timeline.push(PracticeAnswer[i]); }
-    PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePagelast);
-*/
-  Trials.timeline.push(TrialPage1); // 練習は終了です。　これから本実験を開始します。
-  // ---------------------------------------------------------------------
-  switch (pattern) {
+      for (let i = 0; i < PracticeAnswer.length; i++) { PracticeTrials.timeline.push(PracticeAnswer[i]); }
+      PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePagelast);
+    */
+    Trials.timeline.push(TrialPage1); // 練習は終了です。　これから本実験を開始します。
+    // ---------------------------------------------------------------------
+    switch (pattern) {
       // -----------------------------------------------------------------
       case '1': // グループ1 = 1→2→7→8
       default:
-        addExamBlockToTimeline(1) ; 
-        addExamBlockToTimeline(2) ; Trials.timeline.push(resttime);
-        addExamBlockToTimeline(7) ; 
-        addExamBlockToTimeline(8) ; 
+        addExamBlockToTimeline(1);
+        addExamBlockToTimeline(2); Trials.timeline.push(resttime);
+        addExamBlockToTimeline(7);
+        addExamBlockToTimeline(8);
         break;
       // -----------------------------------------------------------------
       case '2': // グループ2 = 7→8→1→2
-        addExamBlockToTimeline(7) ; 
-        addExamBlockToTimeline(8) ; Trials.timeline.push(resttime);
-        addExamBlockToTimeline(1) ; 
-        addExamBlockToTimeline(2) ; 
-      break;
+        addExamBlockToTimeline(7);
+        addExamBlockToTimeline(8); Trials.timeline.push(resttime);
+        addExamBlockToTimeline(1);
+        addExamBlockToTimeline(2);
+        break;
       // -----------------------------------------------------------------
       case '3': // グループ3 = 3→4→5→6
-        addExamBlockToTimeline(3) ; 
-        addExamBlockToTimeline(4) ; Trials.timeline.push(resttime);
-        addExamBlockToTimeline(5) ; 
-        addExamBlockToTimeline(6) ; 
+        addExamBlockToTimeline(3);
+        addExamBlockToTimeline(4); Trials.timeline.push(resttime);
+        addExamBlockToTimeline(5);
+        addExamBlockToTimeline(6);
         break;
       // -----------------------------------------------------------------
       case '4': // グループ4 = 5→6→3→4
-        addExamBlockToTimeline(5) ; 
-        addExamBlockToTimeline(6) ; Trials.timeline.push(resttime);
-        addExamBlockToTimeline(3) ; 
-        addExamBlockToTimeline(4) ; 
+        addExamBlockToTimeline(5);
+        addExamBlockToTimeline(6); Trials.timeline.push(resttime);
+        addExamBlockToTimeline(3);
+        addExamBlockToTimeline(4);
         break;
       case '0': // デバッグ用に全部
-        addExamBlockToTimeline(1) ; addExamBlockToTimeline(2) ; addExamBlockToTimeline(3) ; addExamBlockToTimeline(4) ;
-        addExamBlockToTimeline(5) ; addExamBlockToTimeline(6) ; addExamBlockToTimeline(7) ; addExamBlockToTimeline(8) ;
-      break ;
+        addExamBlockToTimeline(1); addExamBlockToTimeline(2); addExamBlockToTimeline(3); addExamBlockToTimeline(4);
+        addExamBlockToTimeline(5); addExamBlockToTimeline(6); addExamBlockToTimeline(7); addExamBlockToTimeline(8);
+        break;
     } // switch ここまで
 
     // ------------------------------------------------------------------------
     // 実験の開始
     // ------------------------------------------------------------------------
 
-    jsPsych.run([enter_fullscreen,Page1, Page2, Page3,PracticeTrials, Trials, TrialPagelast, exit_fullscreen]);
+    jsPsych.run([enter_fullscreen, Page1, Page2, Page3, PracticeTrials, Trials, TrialPagelast, exit_fullscreen]);
     // ========================================================
     // プログラム本体の終わり
     // ========================================================
-</script>
+  </script>
 </head>
 <body></body>
 </html>
