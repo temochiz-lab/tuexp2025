@@ -27,7 +27,7 @@
     const urlParams   = new URLSearchParams(queryString);
     var   pattern     = urlParams.get('pattern');
     var   testmode;
-//    testmode = 1;                                     // ************************** 開発時のみ・後でコメント **************************
+    testmode = 1;                                     // ************************** 開発時のみ・後でコメント **************************
     if (urlParams.has('test')) {
       testmode = urlParams.get('test');
     }
@@ -68,7 +68,7 @@
       var mi     = ('00' + dt.getMinutes()).slice(-2);
       var se     = ('00' + dt.getSeconds()).slice(-2);
 
-      var answer = yyyy + mm + dd + "-" + hh + mm + se;
+      var answer = yyyy + mm + dd + "-" + hh + mi + se;
       return (answer);
     }
 
