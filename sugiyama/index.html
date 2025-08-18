@@ -296,7 +296,7 @@
       まず初めに操作方法の確認のための練習問題を行います。 <br>\
       準備が出来たら、「開始する」を押してください。 <br>\
       <br><br></font></div>',
-      choices: ['開始する'],
+      choices: ['次へ'],
     };
 
     // 実験の終了
@@ -338,11 +338,11 @@
       type: jsPsychHtmlButtonResponse,
       margin_vertical: '100px',
       margin_horizontal: '100px',
-      stimulus: '<div align="left" style="width:80%;margin:auto;"><font> \
+      stimulus: '<div align="left"><font> \
       <br><br><br>\
-      これから実験を開始いたします。 <br>\
+      これから練習を開始いたします。 <br>\
       <br><br><br>\
-      初めに２分間、文章を読んでいただきます。２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
+      初めに２分間、文章を読んでいただきます。<br>２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
       <br><br><br>\
       まずは全体の流れをつかむつもりで、スムーズに読み進めてください。 <br>\
       細かいところは後から読み返していただければ大丈夫です。 <br>\
@@ -353,7 +353,24 @@
       choices: ['開始する'],
     };
   // ---------------------------------------------------------------------
-    var PracticeExam1Text = '<div align="left" style="width:90%;margin:auto;">\
+  var TrialPage1 = {
+      type: jsPsychHtmlButtonResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: '<div align="left"><font> \
+      <br><br><br>\
+      初めに２分間、文章を読んでいただきます。<br>２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
+      <br>\
+      まずは全体の流れをつかむつもりで、スムーズに読み進めてください。<br>\
+      細かいところは後から読み返していただければ大丈夫です。<br>\
+      <br>\
+      準備が出来たら「開始」ボタンを押してください。<br>\
+      <br><br></font></div>',
+      choices: ['開始する'],
+    };
+  // ---------------------------------------------------------------------
+//    var PracticeExam1Text = '<div align="left" style="width:90%;margin:auto;">\
+    var PracticeExam1Text = '<div align="left"">\
     <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
     練習問題<br> \
     　春のある日、私は友人の佐藤と新しくできた商店街を歩いていた。小さな雑貨屋やカフェが並び、通りには甘い匂いが漂っている。佐藤は以前からこの場所をチェックしていたらしく、「ここのパン屋は評判らしいよ」と笑顔で言った。店先には焼き立てのクロワッサンが並び、ガラス越しに見える厨房では、職人が丁寧に生地を成形している。私たちは迷わず中に入り、それぞれ好きなパンを選んだ。私はチョコレート入り、佐藤はハムとチーズのサンドだ。店内の窓際席に座り、温かい紅茶と一緒に味わう。口に広がる甘みと香ばしさは、何とも言えない幸福感をもたらした。<br> \
@@ -426,6 +443,57 @@
         ]
       }
     ];
+
+  // ---------------------------------------------------------------------
+    var TrialPage2 = {
+      type: jsPsychHtmlButtonResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: '<div align="left""><font> \
+      <br><br><br>\
+      次に、先ほど読んだ文章に関する５つの問題（5択式）に答えていただきます。 <br>\
+      <br>\
+      文章をもう一度表示する場合は、外面上部のボタンを押してください。閉じたい場合は、閉じるボタンを押してください。<br>\
+      <br>\
+      制限時間は８分です。<br>\
+      <br>\
+      準備が出来たら「開始」ボタンを押してください。<br>\
+      <br>\
+      ＊各問題は「次へ」を押すと戻れませんのでご注意ください。<br>\
+      <br><br></font></div>',
+      choices: ['開始する'],
+    };
+  // ---------------------------------------------------------------------
+  var TrialPage3 = {
+      type: jsPsychHtmlButtonResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: '<div align="left"><font> \
+      <br><br><br>\
+      次に、先ほど読んだ文章についての印象について答えていただきます。<br>\
+      <br>\
+      1（全くそう思わない）～5（非常にそう思う）のいずれかを選ぶ形式です。<br>\
+      <br>\
+      制限時間はありません。<br>\
+      <br>\
+      準備が出来たら「開始」ボタンを押してください。<br>\
+      <br><br></font></div>',
+      choices: ['開始する'],
+    };
+  // ---------------------------------------------------------------------
+  var PracticePage2 = {
+      type: jsPsychHtmlButtonResponse,
+      margin_vertical: '100px',
+      margin_horizontal: '100px',
+      stimulus: '<div align="left"><font> \
+      <br><br><br>\
+      練習は終了です。<br>\
+      これから本実験を開始します。<br>\
+      <br>\
+      「次へ」を押して進んでください。<br>\
+      <br><br></font></div>',
+      choices: ['次へ'],
+    };
   // ---------------------------------------------------------------------
     // 縦表示の質問群を作成
     const PracticeAnswer = []; // ここに出来上がる
@@ -459,10 +527,10 @@
     }
   // ---------------------------------------------------------------------
 
-    PracticeTrials.timeline.push(PracticePage1, PracticeExam1);
     // タイムラインに追加
+    PracticeTrials.timeline.push(PracticePage1, PracticeExam1, TrialPage2);
     for (let i = 0; i < PracticeAnswer.length; i++) { PracticeTrials.timeline.push(PracticeAnswer[i]); }
-    PracticeTrials.timeline.push(QofFont, resttime);
+    PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePage2);
 
     // ---------------------------------------------------------------------
     // 本番試行
