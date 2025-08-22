@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <title>My experiment (v7 unified)</title>
+
+  <!-- jsPsych v7 本体 + CSS（v8は読み込まない） -->
+  <script src="https://unpkg.com/jspsych@7.3.4"></script>
+  <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css">
+
+  <style>
+    /* jsPsychのボタンに付く太いフォーカスリングを無効化 */
+    .jspsych-btn:focus,
+    .jspsych-html-button-response-button:focus,
+    .jspsych-btn:focus-visible,
+    .jspsych-html-button-response-button:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+    </style>
+    
+
+  <!-- v7系プラグイン（使用しているもののみ） -->
+  <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-html-button-response@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-text@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-likert@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-fullscreen@1.2.1"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-preload@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-survey-multi-choice@1.1.3"></script>
+  <script src="https://unpkg.com/@jspsych/plugin-audio-button-response@1.2.0"></script>
+
+  <script>
+    // ========================================================
+    // 起動時パラメータの設定
+    // ========================================================
+    var expsubject; // 実験パターンの説明文（グローバル変数）
+    const urlParams = new URLSearchParams(window.location.search); // URLパラメータ取得用
+    var pattern = urlParams.get('pattern'); // 出題パターン番号
+    var testmode; // テストモードフラグ
+    if (urlParams.has('test')) {
+      testmode = urlParams.get('test');
+    } else {
+      testmode = 1;
+    } // ************************** 開発時のみ・後でコメント **************************
+    const patternMap = { // パターン番号と説明文の対応表
+      '0': "<font color=red>出題パターン 0(全部確認)</font>",
+      '1': "<font color=red>出題パターン 1</font>",
+      '2': "<font color=red>出題パターン 2</font>",
+      '3': "<font color=red>出題パターン 3</font>",
+      '4': "<font color=red>出題パターン 4</font>"
+    };
+    expsubject = patternMap[pattern] || "<font color=red>出題パターン 1</font>";
+    if (!patternMap[pattern]) pattern = 1;
+  </script>
+  <script>
+    // ======================================================
+    // 共通ユーティリティ
+    // ======================================================
+
+    /**
+     * 現在時刻を "yyyymmdd-hhmmss" 形式の文字列で返す
+     */
+    function yyyymmddhhmise() {
+      const dt = new Date(); // 現在日時
+      const yyyy = dt.getFullYear();
+      const mm = ('00' + (dt.getMonth() + 1)).slice(-2);
+      const dd = ('00' + dt.getDate()).slice(-2);
+      const hh = ('00' + dt.getHours()).slice(-2);
+      const mi = ('00' + dt.getMinutes()).slice(-2);
+      const se = ('00' + dt.getSeconds()).slice(-2);
+      return (yyyy + mm + dd + "-" + hh + mi + se);
+    }
+
+    /**
+     * 2クリック目でしか進まないことがある環境対策
+     * .jspsych-btn の最初のボタンに once で finishTrial を直結（既存処理と二重発火しない）
+     */
+    function ensureSingleClickAdvance() {
+      const btn = document.querySelector('.jspsych-btn'); // 最初のjspsychボタン
+      if (!btn) return;
+      // 念のためフォーカスも与える（初回クリック取りこぼし対策）
+      try { btn.focus({ preventScroll: true }); } catch (_) {}
+      btn.addEventListener('click', () => {
+        try { if (typeof jsPsych !== 'undefined' && jsPsych.finishTrial) jsPsych.finishTrial(); } catch(_) {}
+      }, { once: true });
+    }
+
+    // 指示ページ（html-button-response）を簡潔に作るヘルパ
+    const defaultMargins = { margin_vertical: '100px', margin_horizontal: '100px' }; // デフォルト余白
+
+    /**
+     * ボタンで進む指示ページを生成
+     * @param {string} stimulusHTML - 表示するHTML
+     * @param {string} label - ボタンラベル
+     * @returns {object} jsPsych trial オブジェクト
+     */
+    function makeButtonPage(stimulusHTML, label) {
+      return {
+        type: jsPsychHtmlButtonResponse,
+        ...defaultMargins,
+        stimulus: stimulusHTML,
+        choices: [label],
+        on_load: ensureSingleClickAdvance
+      };
+    }
+
+    /**
+     * キーボードで進むページを生成
+     * @param {string} stimulusHTML - 表示するHTML
+     * @param {number} duration - 表示時間(ms)
+     * @returns {object} jsPsych trial オブジェクト
+     */
+    function makeKbdPage(stimulusHTML, duration) {
+      return {
+        type: jsPsychHtmlKeyboardResponse,
+        ...defaultMargins,
+        stimulus: stimulusHTML,
+        choices: 'q',
+        trial_duration: duration
+      };
+    }
+
+    /**
+     * 読解課題用のstimulusページを生成
+     * @param {string} stimulusHTML - 表示するHTML
+     * @param {number} duration - 表示時間(ms)
+     * @returns {object} jsPsych trial オブジェクト
+     */
+    function makeReadingStimulus(stimulusHTML, duration) {
+      return {
+        type: jsPsychHtmlKeyboardResponse,
+        ...defaultMargins,
+        stimulus: stimulusHTML,
+        choices: 'q',
+        trial_duration: duration
+      };
+    }
+  </script>
+
+  <script>
+    // ======================================================
+    // プログラム本体
+    // ======================================================
+    var expname           = "sugiyama2025-0812-002-";             // 実験名
+    var filename          = expname + yyyymmddhhmise() + ".csv";  // 保存時のファイル名
+    var stimulusDuration  = 120000;                                // 問題表示時間  2分
+    var responseTimeLimit = 480000;                                // 回答制限時間  8分
+    var resttime_msec     = 180000;                                // 休憩時間      3分
+
+    var jsPsych = initJsPsych({ // jsPsych本体
+      on_finish: function () {
+        jsPsych.data.get().localSave('csv', filename);
+      }
+    });
+
+    // テストモード用パラメーター
+    var testmodeText = ''; // テストモード表示用テキスト
+    if (testmode == '1') {
+      testmodeText       = " <font color = 'blue'>テストモード</font>";
+      stimulusDuration   = 10000;
+      responseTimeLimit  = 10000;
+      resttime_msec      = 10000;
+    }
+
+    // ------------------------------------------------------
+    // enter_fullscreen
+    // ------------------------------------------------------
+    var enter_fullscreen = { // 全画面化トライアル
+      type: jsPsychFullscreen,
+      message: '<p>実験名: ' + expname + expsubject + testmodeText +'</p><p>開始ボタンを押すと全画面表示で実験が始まります。</p>',
+      button_label: "開始",
+      fullscreen_mode: true
+    }
+
+    // ------------------------------------------------------
+    // Page1（同意/説明 + Ctrl+Qグローバル登録）
+    // ------------------------------------------------------
+    var Page1 = makeButtonPage('<div align="left" style="width:80%;margin:auto;"><font> \
+      <br><br><br>\
+      私は、常磐大学人間科学部心理学科4年の杉山真尋です。 <br>\
+      本研究の目的は、文章を読む際の体験や印象がどのように形成されるのかを検討することにあります。日常的な読解場面における反応や感じ方の傾向を把握するために、パソコン画面上で文章を読んでいただく課題を通して実験を行います。 <br>\
+      <br><br>\
+      本実験への参加は完全に任意であり、参加を強制するものではありません。実施中に気分が優れない、または答えたくないと感じた場合は、いつでも中断していただいて構いません。また、参加の有無や途中中止によって、参加者が不利益を被ることは一切ありませんのでご安心ください。さらに、実験後に協力を取り消すことも可能です。 <br>\
+      <br><br>\
+      ご協力いただいたデータは、研究室内で厳重に管理され、直ちに記号化された上で統計的に処理されます。個人情報が特定されることはなく、プライバシー保護には十分に配慮しております。得られたデータは卒業論文の作成および常磐大学への提出、必要に応じた学術学会等での発表といった、学術研究の目的に限って使用されます。分析後のデータは10年間保管し、その後は個人情報保護に配慮した方法で適切に廃棄いたします。 <br>\
+      <br><br>\
+      上記の趣旨をご理解いただいたうえで、どうぞ自然な形で課題にご参加ください。皆さまのご協力に深く感謝申し上げます。 <br>\
+      <br></font></div>', '次へ');
+    // Ctrl+Q（スキップ）を一度だけ登録
+    Page1.on_load = function () {
+      ensureSingleClickAdvance();
+      if (!window.__globalCtrlQHandler) {
+        /**
+         * Ctrl+Qで強制的に次へ進むグローバルハンドラ
+         */
+        window.__globalCtrlQHandler = function (e) {
+          if (e.ctrlKey && (e.key === 'q' || e.key === 'Q')) {
+            e.preventDefault();
+            const selectors = [
+              '.jspsych-btn',
+              '#jspsych-survey-text-next',
+              '#jspsych-survey-multi-choice-next',
+              '#jspsych-survey-likert-next',
+              '.jspsych-html-button-response-button',
+              '.jspsych-audio-button-response-button'
+            ];
+            let clicked = false; // クリックしたかどうか
+            for (const sel of selectors) {
+              const btn = document.querySelector(sel);
+              if (btn) { btn.click(); clicked = true; break; }
+            }
+            if (!clicked && typeof jsPsych !== 'undefined' && jsPsych.finishTrial) {
+              try { jsPsych.finishTrial(); } catch (_) {}
+            }
+          }
+        };
+        document.addEventListener('keydown', window.__globalCtrlQHandler, { passive: false });
+      }
+    };
+
+    // ------------------------------------------------------
+    // Page2（属性）
+    // ------------------------------------------------------
+    var mustflag = true; // 必須入力フラグ
+    if (testmode == 1) mustflag = false;
+    var Page2 = { // 属性入力ページ
+      type: jsPsychSurveyText,
+      questions: [
+        { prompt: '学籍番号と年齢を入力してください。<br><br><br>あなたの学籍番号を入力してください。', columns: 5, required: mustflag, name: 'id' },
+        { prompt: 'あなたの年齢を入力してください。', columns: 5, required: mustflag, name: 'age' },
+      ],
+      button_label: '次へ',
+    };
+
+    // ------------------------------------------------------
+    // Page3（課題概要）
+    // ------------------------------------------------------
+    var Page3 = makeButtonPage('<div align="left"><font> \
+      <br><br><br>\
+      この実験では、文章を読んで、その内容に関する質問に答えていただきます。 <br>\
+      文章の表示時間や回答内容は、研究目的のために記録されます。 <br>\
+      途中で休憩時間や記憶に関するテストも含まれます。 <br>\
+      <br><br><br>\
+      以下のことに注意してください： <br>\
+      ・実験中は静かな環境で行ってください。 <br>\
+      ・わからない言葉や内容があっても、まずはご自身の理解で読み進めてください。 <br>\
+      <br><br><br>\
+      まず初めに操作方法の確認のための練習問題を行います。 <br>\
+      準備が出来たら、「開始」を押してください。 <br>\
+      <br><br></font></div>', '開始');
+
+    // ------------------------------------------------------
+    // bye / exit_fullscreen / preload / resttime
+    // ------------------------------------------------------
+    var bye = { type: jsPsychHtmlKeyboardResponse, stimulus: 'これで実験は終了です。 PCには触れずに実験者の指示に従ってください。' }; // 終了メッセージ
+    var exit_fullscreen = { type: jsPsychFullscreen, fullscreen_mode: false, delay_after: 0 }; // 全画面解除
+    var preload = { type: jsPsychPreload, auto_preload: true }; // 画像等プリロード
+    var resttime = makeKbdPage("3分間休憩します", resttime_msec); // 休憩ページ
+
+    // ======================================================
+    // 練習
+    // ======================================================
+    var PracticePage1 = makeButtonPage('<div align="left"><font> \
+      <br><br><br>\
+      これから練習を開始いたします。 <br>\
+      <br><br><br>\
+      初めに２分間、文章を読んでいただきます。<br>２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
+      <br><br><br>\
+      まずは全体の流れをつかむつもりで、スムーズに読み進めてください。 <br>\
+      細かいところは後から読み返していただければ大丈夫です。 <br>\
+      <br><br><br>\
+      準備が出来たら「開始」ボタンを押してください。 <br>\
+      開始と同時にタイマーがスタートされます。 <br>\
+      <br><br></font></div>', '開始');
+
+    var PracticeExam1Text = '<div align="left"">\
+    <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
+    練習問題<br> \
+    　春のある日、私は友人の佐藤と新しくできた商店街を歩いていた。小さな雑貨屋やカフェが並び、通りには甘い匂いが漂っている。佐藤は以前からこの場所をチェックしていたらしく、「ここのパン屋は評判らしいよ」と笑顔で言った。店先には焼き立てのクロワッサンが並び、ガラス越しに見える厨房では、職人が丁寧に生地を成形している。私たちは迷わず中に入り、それぞれ好きなパンを選んだ。私はチョコレート入り、佐藤はハムとチーズのサンドだ。店内の窓際席に座り、温かい紅茶と一緒に味わう。口に広がる甘みと香ばしさは、何とも言えない幸福感をもたらした。<br> \
+    　食後、私たちは近くの古本屋に立ち寄った。棚には古びた装丁の小説や、昭和時代の雑誌が整然と並んでいる。佐藤は旅行記を手に取り、ページをめくる手が止まらない様子だった。私は表紙に引かれて、あるエッセイ集を手に取った。読み進めると、著者が旅先で出会った人々の温かさが静かに綴られていた。その文章に心を動かされ、私は思わず購入を決めた。<br> \
+    　その後、私たちは商店街をさらに歩き、小さな花屋に立ち寄った。色とりどりの花が並び、春の訪れを感じさせる。佐藤が一輪の黄色いチューリップを選び、私も青いデルフィニウムに目を奪われた。花を手に持ちながら、私たちは次に喫茶店へ向かった。窓際の席に座り、外の景色を眺めながら、ゆっくりとコーヒーを飲んだ。何気ない会話の中に、心地よい時間が流れていくのを感じた。気づけば夕方、商店街はオレンジ色の光に包まれていた。帰り道、佐藤が「また来よう」と言い、私も深くうなずいた。こうした小さな一日は、後から振り返ると宝物のように輝くのだと思った。<br> \
+    </div></div>';
+
+    var PracticeExam1 = makeReadingStimulus(PracticeExam1Text, stimulusDuration); // 練習用読解課題
+
+    var TrialPage2 = makeButtonPage('<div align="left""><font> \
+      <br><br><br>\
+      次に、先ほど読んだ文章に関する５つの問題（5択式）に答えていただきます。 <br>\
+      <br>\
+      文章をもう一度表示する場合は、外面上部のボタンを押してください。閉じたい場合は、閉じるボタンを押してください。<br>\
+      <br>\
+      制限時間は８分です。<br>\
+      <br>\
+      準備が出来たら「開始」ボタンを押してください。<br>\
+      <br>\
+      ＊各問題は「次へ」を押すと戻れませんのでご注意ください。<br>\
+      <br><br></font></div>', '開始');
+
+    var TrialPage3 = makeButtonPage('<div align="left"><font> \
+      <br><br><br>\
+      次に、先ほど読んだ文章についての印象について答えていただきます。<br>\
+      <br>\
+      1（全くそう思わない）～5（非常にそう思う）のいずれかを選ぶ形式です。<br>\
+      <br>\
+      制限時間はありません。<br>\
+      <br>\
+      準備が出来たら「開始」ボタンを押してください。<br>\
+      <br><br></font></div>', '開始');
+
+    var PracticePagelast = makeButtonPage('<div align="left"><font> \
+      <br><br><br>\
+      練習は終了です。<br>\
+      これから本実験を開始します。<br>\
+      <br>\
+      「次へ」を押して進んでください。<br>\
+      <br><br></font></div>', '次へ');
+
+    var TrialPagelast = { type: jsPsychHtmlKeyboardResponse, stimulus: '<div align="left"><font> \
+      <br><br><br>\
+      実験は以上です。ご協力ありがとうございました。<br>\
+      本実験の真の目的についてご説明いたします。<br>\
+      <br>\
+      本研究は、デジタル環境におけるフォントの種類（セリフ体とサンセリフ体）が、読解力(速度・正答率)・主観的な読みやすさや印象の評価にどのような影響を及ぼすかを検討することを目的としていました。<br>\
+      <br>\
+      この目的を事前に明かしてしまうと、「フォントを意識して読む」といった行動が誘発され、自然な読解行動に偏りが生じるおそれがあるため、フォントに関する情報はあえて事前にお伝えしておりませんでした。<br>\
+      <br>\
+      実験中に提示された文章は、内容を統一した上で、異なるフォントで提示されており、その違いが理解や主観的評価に与える影響を測定しています。<br>\
+      <br>\
+      皆さまのご協力により、フォントの視認性や可読性が学習や情報処理に与える影響について、今後さらに深く理解を進めることができると考えております。<br>\
+      <br>\
+      本研究は卒業研究の目的に限って使用され、それ以外の目的に使用されることはありません。<br>\
+      <br>\
+      本日はご協力いただき、誠にありがとうございました。<br>\
+      <br><br></font></div>' };
+
+    // ======================================================
+    // 設問（5件法）とフォント印象
+    // ======================================================
+
+    /**
+     * 5件法設問ページを生成
+     * @param {string} argLabel - 設問タイトル
+     * @param {string} argPopupText - ポップアップで表示する本文
+     * @returns {object} jsPsych trial オブジェクト
+     */
+    function MakeQuestion5(argLabel, argPopupText) {
+      const Question5_scale = ["１", "２", "３", "４", "５"]; // 5件法ラベル
+      const Question5 = {
+        type: jsPsychSurveyLikert,
+        button_label: "次へ",
+        scale_width: 700,
+        preamble: argLabel + `<br><br>
+          <button id="show-problem" type="button">問題文を表示</button>
+          <div id="problem-overlay" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.4); z-index:9998;"></div>
+          <div id="problem-modal" role="dialog" aria-modal="true" aria-labelledby="problem-title" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%,-50%); width:min(100vw, 1150px); max-height:80vh; overflow:auto; background:#fff; border-radius:12px; box-shadow:0 10px 30px rgba(0,0,0,.25); padding:20px; z-index:9999;">
+            <div style="display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:12px;">
+              <button id="close-problem" type="button">閉じる</button>
+            </div>
+            <div id="problem-content">${typeof argPopupText !== "undefined" ? argPopupText : ""}</div>
+          </div>
+        `,
+        questions: [
+          { prompt: "問題１", name: 'Q01', labels: Question5_scale, required: false },
+          { prompt: "問題２", name: 'Q02', labels: Question5_scale, required: false },
+          { prompt: "問題３", name: 'Q03', labels: Question5_scale, required: false },
+          { prompt: "問題４", name: 'Q04', labels: Question5_scale, required: false },
+          { prompt: "問題５", name: 'Q11', labels: Question5_scale, required: false }
+        ],
+        on_load: function () {
+          // ポップアップ表示・非表示制御
+          const showBtn  = document.getElementById('show-problem');
+          const overlay  = document.getElementById('problem-overlay');
+          const modal    = document.getElementById('problem-modal');
+          const closeBtn = document.getElementById('close-problem');
+          const open = () => { overlay.style.display = 'block'; modal.style.display = 'block'; };
+          const close = () => { overlay.style.display = 'none'; modal.style.display = 'none'; };
+          showBtn.addEventListener('click', open);
+          closeBtn.addEventListener('click', close);
+          overlay.addEventListener('click', close);
+          document.addEventListener('keydown', (e) => { if (e.key === 'Escape') close(); });
+          // --- タイマー開始＆IDを trial に保存 ---
+          const id = setTimeout(() => { jsPsych.finishTrial(); }, responseTimeLimit);
+          jsPsych.getCurrentTrial()._timeoutId = id;
+          // 「次へ」クリックでタイマーをキャンセル
+          const nextBtn = document.querySelector('button[type="submit"]');
+          if (nextBtn) nextBtn.addEventListener('click', () => clearTimeout(id), { once: true });
+        },
+        on_finish: function () {
+          // タイマー解除
+          const trial = jsPsych.getCurrentTrial();
+          if (trial._timeoutId) clearTimeout(trial._timeoutId);
+        }
+      };
+      return Question5;
+    }
+
+    var QofFont_scale = [
+      "全くそう思わない",
+      "そう思わない",
+      "どちらでもない",
+      "そう思う",
+      "非常にそう思う"
+    ]; // フォント印象用5件法ラベル
+    mustflag = true; if (testmode == 1) mustflag = false;
+    var QofFont = { // フォント印象設問
+      type: jsPsychSurveyLikert,
+      button_label: "次へ",
+      scale_width: 700,
+      questions: [
+        { prompt: "文字がはっきり読める", name: 'Q01', labels: QofFont_scale , required: mustflag},
+        { prompt: "文字がくっきり見える", name: 'Q02', labels: QofFont_scale , required: mustflag},
+        { prompt: "文字の太さが適切だと感じた", name: 'Q03', labels: QofFont_scale , required: mustflag},
+        { prompt: "語彙や表現の意味をすぐに理解できた", name: 'Q04', labels: QofFont_scale , required: mustflag},
+        { prompt: "読んだ内容が頭に入りやすかった", name: 'Q05', labels: QofFont_scale , required: mustflag},
+        { prompt: "読み終えた後内容を思い出せる", name: 'Q06', labels: QofFont_scale , required: mustflag},
+        { prompt: "文章の要点を把握しやすかった", name: 'Q07', labels: QofFont_scale , required: mustflag},
+        { prompt: "読むリズムが途切れにくかった", name: 'Q8', labels: QofFont_scale , required: mustflag},
+        { prompt: "途中で立ち止まらずスムーズに読めた", name: 'Q9', labels: QofFont_scale , required: mustflag},
+        { prompt: "読むスピードが速く感じた", name: 'Q10', labels: QofFont_scale , required: mustflag},
+        { prompt: "全体を読むのに必要な時間が短く感じた", name: 'Q11', labels: QofFont_scale , required: mustflag}
+      ]
+    }
+
+    // ======================================================
+    // 本文データ
+    // ======================================================
+    var ExamIndex = ["", "文章１", "文章２", "文章３", "文章４", "文章５", "文章６", "文章７", "文章８"]; // 各課題タイトル
+
+    /**
+     * 本文テキストをHTML化
+     * @param {number} examNumber - 何番目の課題か
+     * @param {string} text - 本文
+     * @param {string} fontFamily - フォント指定
+     * @returns {string} HTML
+     */
+    function makeExamText(examNumber, text, fontFamily) {
+      return '<div align="left" style="width:90%;margin:auto;">\
+      <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: ' + fontFamily + ';">\
+      ' + ExamIndex[examNumber] + '<br> ' + text + '</div></div>';
+    }
+
+    /**
+     * 本文表示用トライアルを生成
+     * @param {string} stimulus - 表示HTML
+     * @returns {object} jsPsych trial
+     */
+    function makeExamObject(stimulus) { return makeReadingStimulus(stimulus, stimulusDuration); }
+
+    var ExamRaw = []; // 本文生データ
+    ExamRaw[1] = ' \
+      　時間とは、我々にとってどれほど確かなものだろうか。時計の針は均等に進むが、経験される時間は常にゆがみ、濃淡をもって流れる。それゆえ時間は、物理的事実であると同時に、意味づけられた現象でもある。つまり、時間は人によって「解釈される」ものであって、単に流れるものではない。<br>\
+      　ある出来事が意味をもつのは、しばしばそれが過去となってからである。経験の真っ只中では、その価値や位置づけは不明瞭だが、後になって文脈の中に配置されることで「意味ある出来事」となる。ここには、意味が時間を遡って形成されるという逆流的構造がある。<br> \
+      　だがこの逆流は、時間の一方向性と矛盾する。過去は変わらないはずだが、意味は後から与えられる以上、我々の現在は絶えず過去を書き換えているとも言える。記憶は事実を保存するのではなく、現在の自己にとっての妥当性に基づいて再構成される。すなわち、時間の流れは直線的であっても、意味の流れは循環的である。<br>\
+      　また未来は、希望や予測として現在に影を落とす。予想される未来は、現在の選択を方向づける。だがこの未来は、まだ訪れていない以上、想像の産物であり、その不確かさゆえに、現在を強く規定する。「今を生きる」という感覚すら、未来の予感を含んだ構造の中で生まれている。<br>\
+      　こうして、過去・現在・未来はいずれも固定されたものではなく、互いに交錯しながら意味を生成する。時間とは流れるものではなく、意味が構成される舞台であり、出来事が生じる順序ではなく、出来事が持ちうる価値をめぐる関係性なのである。すなわち、我々が時間を経験するとは、自己という存在の構成そのものを意味する。<br>\
+    ';
+    ExamRaw[2] = ' \
+      　制度とは、秩序を確保するために設計された枠組みである。だがそれが機能するのは、人々が自らを制度に従属させることを選ぶときだけである。この選択は、しばしば無意識に行われ、制度はあたかも当然の前提として受け入れられる。こうして制度は、人間の行動を規定するのではなく、人間が自らを規定可能な存在として振る舞うことによって成立する。<br>\
+      　一方で、制度が前提とする秩序は常に逸脱の可能性に晒されている。すべての制度は、それによって排除されるもの、つまり逸脱を含むことで初めて輪郭を持つ。逸脱がなければ制度は可視化されない。むしろ逸脱が制度の存在を逆説的に明らかにする。逸脱は秩序の敵ではなく、秩序が秩序として自覚される契機である。<br>\
+      　また逸脱は、単なる制度の否定ではない。それは制度の限界を露呈させ、時に制度の内部から制度を刷新する力ともなる。制度は、逸脱によって批判され、再定義され、延命される。制度に対する盲目的服従は制度を腐敗させるが、絶え間ない逸脱が制度を鍛える。制度と逸脱は対立ではなく、共依存の関係にある。<br>\
+      　しかし、多くの場合、逸脱は例外として処理され、個人の逸失や逸脱者の人格に還元される。制度に挑むことが、逸脱者に烙印を押す構造そのものが、制度の防衛機構である。だがそれは、制度が本来持っていた柔軟性や可塑性を放棄し、自己目的化している兆候でもある。<br>\
+      　制度を問い直すには、逸脱を異常として隔離するのではなく、それが何を照らし出しているかを読む視線が必要だ。逸脱は破壊ではなく、構造の裂け目を顕にする。そしてその裂け目を通して初めて、制度が保持してきた暗黙の選好や、排除の論理を捉えることができるのである。<br>\
+    ';
+    ExamRaw[3] = ' \
+      　人は未来を予測することで、偶然を制御可能なものとみなそうとする。天気予報、株価の動向、個人のライフプラン――これらはすべて、不確実性に輪郭を与える試みである。だが興味深いのは、予測が的中すればするほど、その背後にある偶然性がかえって不可視化されていくという点である。予測が精度を増すとき、偶然は「誤差」として排除されるのだ。<br>\
+      　しかし、この構造は一つの幻想に支えられている。すなわち、偶然は予測によって矯正可能である、という信仰である。だが偶然は本質的に、法則から逸脱するものではなく、むしろ法則の内部で発生する余白そのものである。コインを投げる行為において、裏が出る確率は五割であっても、実際に出るのは一つだけである。この一回性において偶然は現れる。<br>\
+      　予測とはこの「一回性」を捨象する行為にほかならない。統計や傾向は、無数の過去の集積から導かれるが、個々の未来は常にそれを裏切り得る。ゆえに予測が成立するのは、偶然を無視する構造の上においてである。偶然を完全に織り込んだ予測は、もはや予測ではなく、ただの確率分布にすぎない。<br>\
+      　ところが現代社会では、予測が制度や計画の前提として機能するため、偶然の余地がますます否定されがちである。だが偶然こそが、世界に裂け目を開ける契機である。予測不能な出来事がなければ、新しい意味や価値も生まれない。偶然とは秩序の敵ではなく、秩序が自己更新するための「攪乱」として必要不可欠なのだ。<br>\
+      　結局、予測と偶然は対立ではなく、非対称な補完関係にある。予測は秩序を求め、偶然は裂け目を差し出す。その緊張のなかでしか、世界は意味を持ち得ないのである。<br>\
+    ';
+    ExamRaw[4] = ' \
+      　何かを所有するということは、それを他のすべてのものから区別し、自らの領域に取り込むことを意味する。しかしその瞬間、所有は対象の独立性を奪い、関係性の網から切り離す。例えば「私の本」と言ったとき、それはもはやただの本ではなく、他の誰かの手から引き離された存在としてある。所有とは、世界を分割する行為にほかならない。<br>\
+      　だが奇妙なことに、所有は往々にして不安を伴う。所有物は失われる可能性にさらされているからである。手に入れた途端、喪失が視界に入る。つまり所有とは、喪失の予感を引き寄せる形でもある。所有物に執着すればするほど、それを失うことへの恐れも深まる。この逆説において、所有と喪失は対立するものではなく、むしろ相互依存の関係にある。<br>\
+      　さらに喪失されたものは、しばしば記憶や感情の中でかえって鮮明になる。手元にないからこそ、それは観念の中で理想化される。「かつてあったもの」は、「今あるもの」よりも強く意識されることすらある。喪失は、単なる欠如ではなく、意味の再構成を促す契機となる。<br>\
+      　このとき、所有していたという事実は、喪失されたことによって初めて強く意識される。「持っていた」ことは、「今はない」という断絶の中で初めて輪郭を得る。つまり、所有は喪失によって証明される。所有していたことを本当に理解するのは、それを失ってからなのである。<br>\
+      　ゆえに、所有とは安定的な状態ではなく、喪失への一時的な抵抗に過ぎない。我々が所有にこだわるとき、実は喪失の可能性に抗おうとしているのかもしれない。そして、喪失は常に新たな意味を生み出す。その意味において、喪失とは、所有よりも深く我々の存在を揺さぶり、問い直す力を持つ。<br>\
+    ';
+
+    var ExamText = [], Exam = []; // 本文HTML, 本文トライアル
+    var minchoFont = '&quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif'; // 明朝体
+    var gothicFont = '&quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace'; // ゴシック体
+
+    // 明朝体（1-4）
+    for (var i = 1; i <= 4; i++) {
+      ExamText[i] = makeExamText(i, ExamRaw[i], minchoFont);
+      Exam[i] = makeExamObject(ExamText[i]);
+    }
+    // ゴシック体（5-8）
+    for (var i = 5; i <= 8; i++) {
+      ExamText[i] = makeExamText(i, ExamRaw[i - 4], gothicFont);
+      Exam[i] = makeExamObject(ExamText[i]);
+    }
+
+    /**
+     * 指定した課題番号の一連のトライアルをタイムラインに追加
+     * @param {object} Trials - タイムラインオブジェクト
+     * @param {number} ExamNumber - 課題番号
+     */
+    function addExamBlockToTimeline(Trials, ExamNumber) {
+      Trials.timeline.push(TrialPage1);
+      Trials.timeline.push(Exam[ExamNumber]);
+      Trials.timeline.push(TrialPage2);
+      Trials.timeline.push(MakeQuestion5(ExamIndex[ExamNumber], ExamText[ExamNumber]));
+      Trials.timeline.push(TrialPage3, QofFont);
+    }
+
+    // ======================================================
+    // 本番：手順ページ（"開始" の1クリック不発対策入り）
+    // ======================================================
+    var TrialPage1 = makeButtonPage('<div align="left"><font> \
+      <br><br><br>\
+      初めに２分間、文章を読んでいただきます。<br>２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
+      <br>\
+      まずは全体の流れをつかむつもりで、スムーズに読み進めてください。<br>\
+      細かいところは後から読み返していただければ大丈夫です。<br>\
+      <br>\
+      準備が出来たら「開始」ボタンを押してください。<br>\
+      <br><br></font></div>', '開始');
+
+    // ======================================================
+    // タイムライン構築
+    // ======================================================
+    var PracticeTrials = { timeline: [] }; // 練習用タイムライン
+    PracticeTrials.timeline.push(PracticePage1, PracticeExam1, TrialPage2);
+    PracticeTrials.timeline.push(MakeQuestion5("練習問題", PracticeExam1Text));
+    PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePagelast);
+
+    var Trials = { timeline: [] }; // 本番用タイムライン
+    Trials.timeline.push(TrialPage1);
+
+    // パターンごとに課題順序を決定
+    switch (String(pattern)) {
+      case '2':
+        addExamBlockToTimeline(Trials, 7);
+        addExamBlockToTimeline(Trials, 8); Trials.timeline.push(resttime);
+        addExamBlockToTimeline(Trials, 1);
+        addExamBlockToTimeline(Trials, 2);
+        break;
+      case '3':
+        addExamBlockToTimeline(Trials, 3);
+        addExamBlockToTimeline(Trials, 4); Trials.timeline.push(resttime);
+        addExamBlockToTimeline(Trials, 5);
+        addExamBlockToTimeline(Trials, 6);
+        break;
+      case '4':
+        addExamBlockToTimeline(Trials, 5);
+        addExamBlockToTimeline(Trials, 6); Trials.timeline.push(resttime);
+        addExamBlockToTimeline(Trials, 3);
+        addExamBlockToTimeline(Trials, 4);
+        break;
+      case '0':
+        addExamBlockToTimeline(Trials, 1); addExamBlockToTimeline(Trials, 2); addExamBlockToTimeline(Trials, 3); addExamBlockToTimeline(Trials, 4);
+        addExamBlockToTimeline(Trials, 5); addExamBlockToTimeline(Trials, 6); addExamBlockToTimeline(Trials, 7); addExamBlockToTimeline(Trials, 8);
+        break;
+      case '1':
+      default:
+        addExamBlockToTimeline(Trials, 1);
+        addExamBlockToTimeline(Trials, 2); Trials.timeline.push(resttime);
+        addExamBlockToTimeline(Trials, 7);
+        addExamBlockToTimeline(Trials, 8);
+        break;
+    }
+
+    // ======================================================
+    // 実行
+    // ======================================================
+    jsPsych.run([
+      enter_fullscreen,
+      Page1,
+      Page2,
+      Page3,
+      { timeline: PracticeTrials.timeline },
+      { timeline: Trials.timeline },
+      TrialPagelast,
+      exit_fullscreen
+    ]);
+  </script>
+</head>
+<body></body>
+</html>
