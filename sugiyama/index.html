@@ -86,11 +86,15 @@
     // 説明文やお約束のパーツ
     // グローバル変数
     // ======================================================
-    var expname           = "sugiyama2025-0812-002-";             // 実験名
+    var expname           = "sugiyama2025-0824-001-";             // 実験名
     var filename          = expname + yyyymmddhhmise() + ".csv";  // 保存時のファイル名
     var stimulusDuration  = 120000;                               // 問題表示時間  2分(msec) 2 x 60 x 1000 = 120000
     var responseTimeLimit = 480000;                               // 回答制限時間  8分(msec) 1 x 60 x 1000 = 480000
     var resttime_msec     = 180000;                               // 休憩時間      3分(msec) 3 x 60 x 1000 = 180000
+
+    // margin_vertical, margin_horizontal の共通定数
+    const COMMON_MARGIN_VERTICAL = '100px';
+    const COMMON_MARGIN_HORIZONTAL = '100px';
 
     // ここから開始
     var jsPsych = initJsPsych({
@@ -132,8 +136,8 @@
     // ---------------------------------------------------------------------
     var Page1 = {
       type             : jsPsychHtmlButtonResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
+      margin_vertical  : COMMON_MARGIN_VERTICAL,
+      margin_horizontal: COMMON_MARGIN_HORIZONTAL,
       stimulus         : '<div align="left" style="width:80%;margin:auto;"><font> \
       <br><br><br>\
       私は、常磐大学人間科学部心理学科4年の杉山真尋です。 <br>\
@@ -199,8 +203,8 @@
     // ---------------------------------------------------------------------
     var Page3 = {
       type             : jsPsychHtmlButtonResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
+      margin_vertical  : COMMON_MARGIN_VERTICAL,
+      margin_horizontal: COMMON_MARGIN_HORIZONTAL,
       stimulus         : '<div align="left"><font> \
       <br><br><br>\
       この実験では、文章を読んで、その内容に関する質問に答えていただきます。 <br>\
@@ -271,26 +275,22 @@
       }, { once: true });
     }
     
-
     // ---------------------------------------------------------------------
     // PracticePage1
-    // 初めに２分間、文章を読んでいただきます。(練習用・本番用で別)
+    // 文章を読んでいただきます。(練習用・本番用で別)
     // ---------------------------------------------------------------------
     var PracticePage1 = {
       type             : jsPsychHtmlButtonResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
+      margin_vertical  : COMMON_MARGIN_VERTICAL,
+      margin_horizontal: COMMON_MARGIN_HORIZONTAL,
       stimulus         : '<div align="left"><font> \
       <br><br><br>\
-      これから練習を開始いたします。 <br>\
-      <br><br><br>\
-      初めに２分間、文章を読んでいただきます。<br>２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
-      <br><br><br>\
-      まずは全体の流れをつかむつもりで、スムーズに読み進めてください。 <br>\
-      細かいところは後から読み返していただければ大丈夫です。 <br>\
-      <br><br><br>\
-      準備が出来たら「開始」ボタンを押してください。 <br>\
-      開始と同時にタイマーがスタートされます。 <br>\
+      初めに、文章を読んでいただきます。<br>読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりません。<br>次の画面に進むにはスペースキーを押してください。 <br>\
+      <br>\
+      まずは全体の流れをつかむつもりで、スムーズに読み進めてください。<br>\
+      細かいところは後から読み返していただければ大丈夫です。<br>\
+      <br>\
+      準備が出来たら「開始」ボタンを押してください。<br>\
       <br><br></font></div>',
       choices          : ['開始'],
       on_load: ensureSingleClickAdvance
@@ -299,20 +299,20 @@
 
     // ---------------------------------------------------------------------
     // TrialPage1
-    // 初めに２分間、文章を読んでいただきます。(練習用・本番用で別)
+    // ２分間、文章を読んでいただきます。(練習用・本番用で別)
     // ---------------------------------------------------------------------
     var TrialPage1 = {
       type             : jsPsychHtmlButtonResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
+      margin_vertical  : COMMON_MARGIN_VERTICAL,
+      margin_horizontal: COMMON_MARGIN_HORIZONTAL,
       stimulus         : '<div align="left"><font> \
+      ２分間文章を読んでいただきます。<br>２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
       <br><br><br>\
-      初めに２分間、文章を読んでいただきます。<br>２分間の間に読み終わった場合は、「読み終えた」ボタンを押してください。<br>なお「読み終えた」ボタンを押しても画面は切り替わりませんので、残りの時間は文章を読み返すなどにお使いください。 <br>\
-      <br>\
-      まずは全体の流れをつかむつもりで、スムーズに読み進めてください。<br>\
-      細かいところは後から読み返していただければ大丈夫です。<br>\
-      <br>\
-      準備が出来たら「開始」ボタンを押してください。<br>\
+      まずは全体の流れをつかむつもりで、スムーズに読み進めてください。 <br>\
+      細かいところは後から読み返していただければ大丈夫です。 <br>\
+      <br><br><br>\
+      準備が出来たら「開始」ボタンを押してください。 <br>\
+      開始と同時にタイマーがスタートされます。 <br>\
       <br><br></font></div>',
       choices          : ['開始'],
       on_load: ensureSingleClickAdvance
@@ -329,18 +329,40 @@
     　食後、私たちは近くの古本屋に立ち寄った。棚には古びた装丁の小説や、昭和時代の雑誌が整然と並んでいる。佐藤は旅行記を手に取り、ページをめくる手が止まらない様子だった。私は表紙に引かれて、あるエッセイ集を手に取った。読み進めると、著者が旅先で出会った人々の温かさが静かに綴られていた。その文章に心を動かされ、私は思わず購入を決めた。<br> \
     　その後、私たちは商店街をさらに歩き、小さな花屋に立ち寄った。色とりどりの花が並び、春の訪れを感じさせる。佐藤が一輪の黄色いチューリップを選び、私も青いデルフィニウムに目を奪われた。花を手に持ちながら、私たちは次に喫茶店へ向かった。窓際の席に座り、外の景色を眺めながら、ゆっくりとコーヒーを飲んだ。何気ない会話の中に、心地よい時間が流れていくのを感じた。気づけば夕方、商店街はオレンジ色の光に包まれていた。帰り道、佐藤が「また来よう」と言い、私も深くうなずいた。こうした小さな一日は、後から振り返ると宝物のように輝くのだと思った。<br> \
     </div></div>';
-    
+
+    // ======================================================
+    // 「読み終えた」ボタンの計測処理（再利用可能）
+    // ======================================================
+    function setupReadingDoneTimer(startTime) {
+      const btn = document.getElementById('doneReadingBtn');
+      const msg = document.getElementById('doneReadingMsg');
+      if (!btn || !msg) return;
+
+      btn.addEventListener('click', function () {
+        const elapsed = performance.now() - startTime;
+        jsPsych.data.get().addToLast({ reading_done_time: elapsed });
+        msg.innerHTML = `「読み終えた」ボタンが押されました。`;
+      });
+    }
     // ---------------------------------------------------------------------
     // PracticeExam1
     // 縦書きで文章を表示(練習用)
     // ---------------------------------------------------------------------
     var PracticeExam1 = {
       type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : PracticeExam1Text,
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前の方でグローバル変数で定義
+      margin_vertical  : COMMON_MARGIN_VERTICAL,
+      margin_horizontal: COMMON_MARGIN_HORIZONTAL,
+      stimulus: PracticeExam1Text + `
+        <br><br>
+        <button id="doneReadingBtn" class="jspsych-btn">読み終えた</button>
+        <p id="doneReadingMsg" style="color: green;"></p>
+      `,
+      choices          : ['q',' '],
+      // trial_duration   : 練習試行は時間制限が無い
+      on_load: function () {
+        const start = performance.now();
+        setupReadingDoneTimer(start);
+      }
     };
     
     // ---------------------------------------------------------------------
@@ -349,8 +371,8 @@
     // ---------------------------------------------------------------------
     var TrialPage2 = {
       type             : jsPsychHtmlButtonResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
+      margin_vertical  : COMMON_MARGIN_VERTICAL,
+      margin_horizontal: COMMON_MARGIN_HORIZONTAL,
       stimulus         : '<div align="left""><font> \
       <br><br><br>\
       次に、先ほど読んだ文章に関する５つの問題（5択式）に答えていただきます。 <br>\
@@ -372,8 +394,8 @@
     // ---------------------------------------------------------------------
     var TrialPage3 = {
       type             : jsPsychHtmlButtonResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
+      margin_vertical  : COMMON_MARGIN_VERTICAL,
+      margin_horizontal: COMMON_MARGIN_HORIZONTAL,
       stimulus         : '<div align="left"><font> \
       <br><br><br>\
       次に、先ほど読んだ文章についての印象について答えていただきます。<br>\
@@ -394,8 +416,8 @@
 
     var PracticePagelast = {
       type             : jsPsychHtmlButtonResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
+      margin_vertical  : COMMON_MARGIN_VERTICAL,
+      margin_horizontal: COMMON_MARGIN_HORIZONTAL,
       stimulus         : '<div align="left"><font> \
       <br><br><br>\
       練習は終了です。<br>\
@@ -457,7 +479,7 @@
           { prompt: "問題２", name: 'Q02', labels: Question5_scale, required: false },
           { prompt: "問題３", name: 'Q03', labels: Question5_scale, required: false },
           { prompt: "問題４", name: 'Q04', labels: Question5_scale, required: false },
-          { prompt: "問題５", name: 'Q11', labels: Question5_scale, required: false }
+          { prompt: "問題５", name: 'Q05', labels: Question5_scale, required: false }
         ],
         on_load: function () {
           const showBtn  = document.getElementById('show-problem');
@@ -548,8 +570,35 @@
     var ExamAnswer    = [];      // 縦書き質問オブジェクト群（2次元配列）
     var ExamNumber;              // 配列の添え字用
 
+    // 問題文表示をmake
+    /**
+     * 指定された課題番号の読解試行オブジェクトを返す関数（読み終えたボタン付き）
+     * ボタンを押しても画面遷移せず、時間を記録しメッセージ表示のみ行う
+     * 
+     * @param {number} argExamNumber - 課題番号
+     * @returns {object} jsPsych trial オブジェクト
+     */
+    function MakeAExam(argExamNumber) {
+      return {
+        type: jsPsychHtmlKeyboardResponse,
+        margin_vertical: COMMON_MARGIN_VERTICAL,
+        margin_horizontal: COMMON_MARGIN_HORIZONTAL,
+        stimulus: ExamText[argExamNumber] + `
+          <br><br>
+          <button id="doneReadingBtn" class="jspsych-btn">読み終えた</button>
+          <p id="doneReadingMsg" style="color: green;"></p>
+        `,
+        choices: 'q',
+        trial_duration: stimulusDuration,
+        on_load: function () {
+          const start = performance.now();
+          setupReadingDoneTimer(start);
+        }
+      };
+    }
+
     // ---------------------------------------------------------------------
-    // 問題１
+    // 文章１
     // ---------------------------------------------------------------------
     ExamNumber           = 1; // koko
     ExamRaw[ExamNumber]  = ' \
@@ -562,18 +611,10 @@
     ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
       <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
       文章１<br> ' + ExamRaw[ExamNumber] + '</div></div>';
-    // ---------------------------------------------------------------------
-    Exam[ExamNumber] = {
-      type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : ExamText[ExamNumber],
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
-    };
+      Exam[ExamNumber] = MakeAExam(ExamNumber) ; // 問題文作成
     
     // ---------------------------------------------------------------------
-    // 問題2
+    // 文章2
     // ---------------------------------------------------------------------
     ExamNumber           = 2; // koko
     ExamRaw[ExamNumber]  = ' \
@@ -586,18 +627,10 @@
     ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
       <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
       文章２<br> ' + ExamRaw[ExamNumber] + '</div></div>';
-    // ---------------------------------------------------------------------
-    Exam[ExamNumber] = {
-      type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : ExamText[ExamNumber],
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
-    };
+      Exam[ExamNumber] = MakeAExam(ExamNumber) ; // 問題文作成
 
     // ---------------------------------------------------------------------
-    // 問題3
+    // 文章3
     // ---------------------------------------------------------------------
     ExamNumber           = 3; // koko
     ExamRaw[ExamNumber]  = ' \
@@ -610,18 +643,10 @@
     ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
       <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
       文章３<br> ' + ExamRaw[ExamNumber] + '</div></div>';
-    // ---------------------------------------------------------------------
-    Exam[ExamNumber] = {
-      type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : ExamText[ExamNumber],
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
-    };
+      Exam[ExamNumber] = MakeAExam(ExamNumber) ; // 問題文作成
 
     // ---------------------------------------------------------------------
-    // 問題4
+    // 文章4
     // ---------------------------------------------------------------------
     ExamNumber           = 4; // koko
     ExamRaw[ExamNumber]  = ' \
@@ -634,84 +659,43 @@
     ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
       <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Mincho&quot;, &quot;ＭＳ 明朝&quot;, serif;">\
       文章４<br> ' + ExamRaw[ExamNumber] + '</div></div>';
-    // ---------------------------------------------------------------------
-    Exam[ExamNumber] = {
-      type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : ExamText[ExamNumber],
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
-    };
+      Exam[ExamNumber] = MakeAExam(ExamNumber) ; // 問題文作成
 
     // ---------------------------------------------------------------------
-    // 問題5 は、問題1 とフォントだけが違う
+    // 文章5 は、問題1 とフォントだけが違う
     // ---------------------------------------------------------------------
     ExamNumber           = 5; // koko
     ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
       <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
       文章５<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
-    // ---------------------------------------------------------------------
-    Exam[ExamNumber] = {
-      type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : ExamText[ExamNumber],
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
-    };
+      Exam[ExamNumber] = MakeAExam(ExamNumber) ; // 問題文作成
 
     // ---------------------------------------------------------------------
-    // 問題6 は、問題2 とフォントだけが違う
+    // 文章6 は、問題2 とフォントだけが違う
     // ---------------------------------------------------------------------
     ExamNumber           = 6; // koko
     ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
       <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
       文章６<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
-    // ---------------------------------------------------------------------
-    Exam[ExamNumber] = {
-      type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : ExamText[ExamNumber],
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
-    };
+      Exam[ExamNumber] = MakeAExam(ExamNumber) ; // 問題文作成
 
     // ---------------------------------------------------------------------
-    // 問題7 は、問題3 とフォントだけが違う
+    // 文章7 は、問題3 とフォントだけが違う
     // ---------------------------------------------------------------------
     ExamNumber           = 7; // koko
     ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
       <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
       文章７<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
-    // ---------------------------------------------------------------------
-    Exam[ExamNumber] = {
-      type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : ExamText[ExamNumber],
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
-    };
+      Exam[ExamNumber] = MakeAExam(ExamNumber) ; // 問題文作成
 
     // ---------------------------------------------------------------------
-    // 問題8 は、問題4 とフォントだけが違う
+    // 文章8 は、問題4 とフォントだけが違う
     // ---------------------------------------------------------------------
     ExamNumber           = 8; // koko
     ExamText[ExamNumber] = '<div align="left" style="width:90%;margin:auto;">\
       <div style="writing-mode: vertical-rl; text-orientation: mixed; line-height: 2.2; font-size: 1.0em; letter-spacing: 0.1em; height: 600px; overflow-y: auto; font-family: &quot;MS Gothic&quot;, &quot;ＭＳ ゴシック&quot;, monospace;"> \
       文章８<br> ' + ExamRaw[ExamNumber -4] + '</div></div>';
-    // ---------------------------------------------------------------------
-    Exam[ExamNumber] = {
-      type             : jsPsychHtmlKeyboardResponse,
-      margin_vertical  : '100px',
-      margin_horizontal: '100px',
-      stimulus         : ExamText[ExamNumber],
-      choices          : 'q',
-      trial_duration   : stimulusDuration, // 前のグローバル変数で定義
-    };
-    // ---------------------------------------------------------------------
+      Exam[ExamNumber] = MakeAExam(ExamNumber) ; // 問題文作成
 
 
     // ---------------------------------------------------------------------
@@ -720,7 +704,7 @@
     function addExamBlockToTimeline(ExamNumber) {
       var ExamIndex = [
         "", // 用意した紙と照らし合わせやすいように目印
-        "問題１", "問題２", "問題３", "問題４", "問題５", "問題６", "問題７", "問題８"
+        "文章１", "文章２", "文章３", "文章４", "文章５", "文章６", "文章７", "文章８"
       ];
 
       Trials.timeline.push(TrialPage1);                             // これから2分間、文章を読んでいただきます。
