@@ -98,9 +98,17 @@
 
     // ここから開始
     var jsPsych = initJsPsych({
-      on_finish: function () {
-        jsPsych.data.get().localSave('csv', filename);
-        //    jsPsych.data.displayData();
+      on_finish: function () { // BOMを付けないとExcelで読めないので
+        const csv = jsPsych.data.get().csv();
+        const BOM = '\uFEFF'; // UTF-8 BOM
+        const csvWithBOM = BOM + csv;
+        const blob = new Blob([csvWithBOM], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement("a");
+        link.href = URL.createObjectURL(blob);
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       }
     });
 
@@ -362,7 +370,13 @@
       on_load: function () {
         const start = performance.now();
         setupReadingDoneTimer(start);
-      }
+      },
+      on_finish: function(data) {
+          const trial = jsPsych.getCurrentTrial();
+          if (trial.reading_done_time !== undefined) {
+            data.reading_done_time = trial.reading_done_time;
+          }
+        }        
     };
     
     // ---------------------------------------------------------------------
@@ -593,7 +607,13 @@
         on_load: function () {
           const start = performance.now();
           setupReadingDoneTimer(start);
-        }
+        },
+        on_finish: function(data) {
+          const trial = jsPsych.getCurrentTrial();
+          if (trial.reading_done_time !== undefined) {
+            data.reading_done_time = trial.reading_done_time;
+          }
+        }        
       };
     }
 
