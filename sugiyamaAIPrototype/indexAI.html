@@ -492,19 +492,6 @@
       Exam[i] = makeExamObject(ExamText[i]);
     }
 
-    /**
-     * 指定した課題番号の一連のトライアルをタイムラインに追加
-     * @param {object} Trials - タイムラインオブジェクト
-     * @param {number} ExamNumber - 課題番号
-     */
-    function addExamBlockToTimeline(Trials, ExamNumber) {
-      Trials.timeline.push(TrialPage1);
-      Trials.timeline.push(Exam[ExamNumber]);
-      Trials.timeline.push(TrialPage2);
-      Trials.timeline.push(MakeQuestion5(ExamIndex[ExamNumber], ExamText[ExamNumber]));
-      Trials.timeline.push(TrialPage3, QofFont);
-    }
-
     // ======================================================
     // 本番：手順ページ（"開始" の1クリック不発対策入り）
     // ======================================================
@@ -518,11 +505,28 @@
       準備が出来たら「開始」ボタンを押してください。<br>\
       <br><br></font></div>', '開始');
 
+
+    /**
+     * 指定した課題番号の一連のトライアルをタイムラインに追加
+     * @param {object} Trials - タイムラインオブジェクト
+     * @param {number} ExamNumber - 課題番号
+     */
+    function addExamBlockToTimeline(Trials, ExamNumber) {
+      Trials.timeline.push(TrialPage1);
+      Trials.timeline.push(Exam[ExamNumber]);
+      Trials.timeline.push(TrialPage2);
+      Trials.timeline.push(MakeQuestion5(ExamIndex[ExamNumber], ExamText[ExamNumber]));
+      Trials.timeline.push(TrialPage3, QofFont);
+    }
+
+
     // ======================================================
     // タイムライン構築
     // ======================================================
     var PracticeTrials = { timeline: [] }; // 練習用タイムライン
-    PracticeTrials.timeline.push(PracticePage1, PracticeExam1, TrialPage2);
+    PracticeTrials.timeline.push(PracticePage1);
+    PracticeTrials.timeline.push(PracticePage1);
+    PracticeTrials.timeline.push(PracticeExam1, TrialPage2);
     PracticeTrials.timeline.push(MakeQuestion5("練習問題", PracticeExam1Text));
     PracticeTrials.timeline.push(TrialPage3, QofFont, PracticePagelast);
 

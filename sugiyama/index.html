@@ -2,11 +2,21 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8" />
-  <title>My experiment (v7 unified)</title>
+  <title>Sugiyama experiment (jsPsych v7 unified)</title>
 
   <!-- jsPsych v7 本体 + CSS（v8は読み込まない） -->
   <script src="https://unpkg.com/jspsych@7.3.4"></script>
   <link rel="stylesheet" href="https://unpkg.com/jspsych@7.3.4/css/jspsych.css">
+  <style>
+    /* jsPsychのボタンに付く太いフォーカスリングを無効化 */
+    .jspsych-btn:focus,
+    .jspsych-html-button-response-button:focus,
+    .jspsych-btn:focus-visible,
+    .jspsych-html-button-response-button:focus-visible {
+      outline: none !important;
+      box-shadow: none !important;
+    }
+  </style>
 
   <!-- v7系プラグイン（使用しているもののみ） -->
   <script src="https://unpkg.com/@jspsych/plugin-html-keyboard-response@1.1.3"></script>
@@ -246,7 +256,22 @@
     // ======================================================
     // 各試行
     // ======================================================
+
+    /**
+     * 2クリック目でしか進まないことがある環境対策
+     * .jspsych-btn の最初のボタンに once で finishTrial を直結（既存処理と二重発火しない）
+     */
+     function ensureSingleClickAdvance() {
+      const btn = document.querySelector('.jspsych-btn'); // 最初のjspsychボタン
+      if (!btn) return;
+      // 念のためフォーカスも与える（初回クリック取りこぼし対策）
+      try { btn.focus({ preventScroll: true }); } catch (_) {}
+      btn.addEventListener('click', () => {
+        try { if (typeof jsPsych !== 'undefined' && jsPsych.finishTrial) jsPsych.finishTrial(); } catch(_) {}
+      }, { once: true });
+    }
     
+
     // ---------------------------------------------------------------------
     // PracticePage1
     // 初めに２分間、文章を読んでいただきます。(練習用・本番用で別)
@@ -268,8 +293,10 @@
       開始と同時にタイマーがスタートされます。 <br>\
       <br><br></font></div>',
       choices          : ['開始'],
+      on_load: ensureSingleClickAdvance
      
     };
+
     // ---------------------------------------------------------------------
     // TrialPage1
     // 初めに２分間、文章を読んでいただきます。(練習用・本番用で別)
@@ -288,6 +315,7 @@
       準備が出来たら「開始」ボタンを押してください。<br>\
       <br><br></font></div>',
       choices          : ['開始'],
+      on_load: ensureSingleClickAdvance
     };
     
     // ---------------------------------------------------------------------
