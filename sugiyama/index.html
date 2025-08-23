@@ -349,8 +349,11 @@
       btn.addEventListener('click', function () {
         const elapsed = performance.now() - startTime;
         jsPsych.data.get().addToLast({ reading_done_time: elapsed });
-        msg.innerHTML = `「読み終えた」ボタンが押されました。`;
-      });
+        msg.innerHTML = `読み終えました。`;
+
+        // ボタンを非表示にする
+        btn.style.display = 'none';
+      }, { once: true }); // クリック処理が1回だけ実行されるように        
     }
     // ---------------------------------------------------------------------
     // PracticeExam1
@@ -730,7 +733,7 @@
       Trials.timeline.push(TrialPage1);                             // これから2分間、文章を読んでいただきます。
       Trials.timeline.push(Exam[ExamNumber]);                       // 問題呈示部分をキューイング
       Trials.timeline.push(TrialPage2);                             // これから5問に答えてください
-      ExamAnswer[ExamNumber] = [];                                  // 縦書き質問群の配列を初期化
+//      ExamAnswer[ExamNumber] = [];                                  // 縦書き質問群の配列を初期化
       Trials.timeline.push(MakeQuestion5(ExamIndex[ExamNumber], ExamText[ExamNumber]));
       Trials.timeline.push(TrialPage3, QofFont);                    // フォントの感想をキューイング
     };
